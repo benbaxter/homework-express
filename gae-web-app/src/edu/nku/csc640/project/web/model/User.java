@@ -6,10 +6,14 @@ public class User implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	String userId;
 	String username;
 	String password;
 	boolean rememberMe;
 	UserRole role;
+	String firstName;
+	String lastName;
+	
 	public String getUsername() {
 		return username;
 	}
@@ -33,6 +37,24 @@ public class User implements Serializable {
 	}
 	public void setRole(UserRole role) {
 		this.role = role;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	
 }
