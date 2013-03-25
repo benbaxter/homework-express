@@ -17,7 +17,6 @@ public abstract class BaseController {
 		if( ! isLoggedIn(user) ) {
 			model.addAttribute("loginUrl", "/actions/login");
 		} else {
-			model.addAttribute("username", user.getUsername());
 			model.addAttribute("logoutUrl", "/actions/logout");
 			model.addAttribute("homeUrl", getHomeUrl(user));
 		}

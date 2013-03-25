@@ -5,6 +5,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -31,7 +32,7 @@ public class AdminController extends BaseController {
 	
 
 	@RequestMapping(value="/admin/courses", method=GET)
-	public @ResponseBody List<Course> getAllCourses() { 
+	public @ResponseBody List<Course> getAllCourses(HttpServletRequest request) { 
 		List<Course> courses = new ArrayList<Course>();
 		Course c1 = new Course();
 		c1.setName("INF 101");

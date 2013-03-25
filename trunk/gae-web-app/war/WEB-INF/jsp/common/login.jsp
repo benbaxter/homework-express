@@ -13,6 +13,12 @@
 					<input type="text" name="username" class="span3" placeholder="Type your username" />
 				<label>Password</label> 
 					<input type="password" name="password" class="span3" placeholder="Type your password" />
+				<label>Role (for testing only)</label>
+					<select name="role" class="span3">
+						<option value="ADMIN">Admin</option>
+						<option value="INSTRUCTOR">Instructor</option>
+						<option value="STUDENT">Student</option>
+					</select> 
 				<!-- future work?
 				<label class="checkbox">
 					<input type="checkbox" name="rememberMe" />Remember me

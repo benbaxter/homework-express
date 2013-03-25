@@ -16,6 +16,11 @@
 	function loadCourses() {
 		$.ajax({
 			url : "/actions/admin/courses",
+				
+			beforeSend: function (xhr) { 
+				xhr.setRequestHeader ("Authorization", make_base_auth(getCookie("username"), getCookie("password")));
+				xhr.setRequestHeader ("username", getCookie("username"));
+			},
 			success : function(data) {
 				$("#course-template").tmpl( data ).appendTo( $("#courseList").empty() );
 				$("#mainContentTitle").html("Courses");
