@@ -20,6 +20,8 @@
 						<form:option value="INSTRUCTOR">Instructor</form:option>
 						<form:option value="STUDENT">Student</form:option>
 					</form:select> 
+				<label>Name</label> 
+					<form:input path="name" class="span3" placeholder="Change your name" />
 				<label>First Name</label> 
 					<form:input path="firstName" class="span3" placeholder="Change your first name" />
 				<label>Last Name</label> 

@@ -1,11 +1,9 @@
 package edu.nku.csc640.project.web.controller;
 
-import static edu.nku.csc640.project.web.model.UserRole.ADMIN;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -22,9 +20,9 @@ import edu.nku.csc640.project.web.model.User;
 public class LoginController extends BaseController {
 	
 	@Autowired
-	AdminController adminController;
+	HomeControllerFactory homeControllerFactory;
 	
-	@RequestMapping(value= {"/login", "/home"}, method=GET)
+	@RequestMapping(value= {"/login", "/home", "/"}, method=GET)
 	public String login(Model model, HttpSession session) { 
 		
 		addMetaDataToModel(model, session);
@@ -63,17 +61,7 @@ public class LoginController extends BaseController {
 		return login(model, session);
 	}	
 	
-	//TODO: once we build the other controllers, we need to update this method
 	protected String goHome(User user, Model model, HttpSession session) {
-		switch (user.getRole()) {
-		case ADMIN:
-			return adminController.goHome(model, session);
-		case INSTRUCTOR:
-			return adminController.goHome(model, session);
-		case STUDENT:
-			return adminController.goHome(model, session);
-		default:
-			return adminController.goHome(model, session);
-		}
+		return homeControllerFactory.goHome(user, model, session);
 	}
 }

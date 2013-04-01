@@ -7,9 +7,9 @@
 	<!--
 	$(document).ready(function() {
 		loadCourses();
+		setUpTypeaheadInstructor();
 	});
-	
-	
+		
 	//This is an example of using server side data
 	//We can use this now to mock up the server call
 	//but we could use local instead until the .Net is built
@@ -30,7 +30,44 @@
 			}
 		});
 	}
-
+	
+	function setUpTypeaheadInstructor() {
+		$('#instructorName').typeahead({
+		    source: function (query, process) {
+		    	$.ajax({
+					url : "/actions/admin/instructors/names",
+					type: 'get',
+		            data: {query: query},
+		            dataType: 'json',
+					success : function(data) {
+						return typeof data == 'undefined' ? false : process(data);
+					}
+		    	});
+		    }
+		});
+	}
+	
+	function createCourse() {
+		$.ajax({
+			url : "/actions/admin/courses/create",
+			data : $("#createCourseForm").serialize(),
+			dataType : "json",
+			type : "post",
+			success : function(data) {
+				if( data.status == "success" ) {
+					$("#createClassErrors").hide();
+					$("#createCourseModel").modal("hide");
+					loadCourses();
+				} else {
+					$("#createClassErrors").show();
+				}
+			},
+			error : function(data) {
+				
+			}
+		});
+	}
+	
 	
 	//This is an example of using 'local' data
 	var newCoursesObj = [
@@ -54,7 +91,15 @@
 	</script>
 	
 	<script type="text/template" id="course-template">
-      <tr><td>\${name}</td><td>\${description}</td></tr>
+      <tr>
+		<td>
+			<a href="#"><i class="icon-pencil"></i></a>
+			<a href="#"><i class="icon-trash"></i></a>
+		</td>
+		<td>\${name}</td>
+		<td>\${instructor.name}</td>
+		<td>\${description}</td>
+	  </tr>
   </script>
 </head>
 
@@ -67,67 +112,20 @@
 			</div>
 			<!--/span-->
 			<div class="span9">
-				<div class="row-fluid">
-					<div class="span4">
-						<h2>Courses</h2>
-						<p>
-						<ul class="nav nav-list">
-							<li class="nav-header">Top 5</li>
-							<li><a href="#">INF 101</a></li>
-							<li><a href="#">INF 102</a></li>
-							<li><a href="#">CIT 101</a></li>
-							<li><a href="#">CSC 101</a></li>
-							<li><a href="#">CSC 103</a></li>
-						</ul>
-						</p>
-						<p>
-							<a class="btn" href="javascript:loadCourses();">See All &raquo;</a> 
-							<a class="btn" href="#">Add &raquo;</a>
-						</p>
-					</div>
-					<!--/span-->
-					<div class="span4">
-						<h2>Instructors</h2>
-						<p>
-						<ul class="nav nav-list">
-							<li class="nav-header">Top 3</li>
-							<li><a href="#">Dr. Newell</a></li>
-							<li><a href="#">Dr. Doyle</a></li>
-							<li><a href="#">Dr. Ward</a></li>
-						</ul>
-						</p>
-						<p>
-							<a class="btn" href="#">See All &raquo;</a> <a class="btn"
-								href="#">Add &raquo;</a>
-						</p>
-					</div>
-					<!--/span-->
-					<div class="span4">
-						<h2>Students</h2>
-						<p>
-						<ul class="nav nav-list">
-							<li class="nav-header">Top 3</li>
-							<li><a href="#">Adil</a></li>
-							<li><a href="#">Mike</a></li>
-							<li><a href="#">Tom</a></li>
-						</ul>
-						</p>
-						<p>
-							<a class="btn" href="#">See All &raquo;</a> <a class="btn"
-								href="#">Add &raquo;</a>
-						</p>
-					</div>
-					<!--/span-->
-				</div>
-				<!--/row-->
 				<div class="hero-unit">
 					<h2 id="mainContentTitle">Could not load section</h2>
 					<p>
+					<a href="#createCourseModel" role="button" 
+						class="btn btn-info btn-small" data-toggle="modal">
+						<i class="icon-plus"></i>Create New Course
+					</a>
 					<table class="table table-hover table-bordered table-striped"
 						width="100%">
 						<thead>
 							<tr>
+								<th>Actions</th>
 								<th>Name</th>
+								<th>Instructor</th>
 								<th>Description</th>
 							</tr>
 						</thead>
@@ -136,13 +134,42 @@
 						</tbody>
 					</table>
 					</p>
-					<p>
-						<a href="javascript:newCourses();" class="btn btn-primary btn-large">Add &raquo;</a>
-					</p>
 				</div>
 			</div>
 			<!--/span-->
 		</div>
 		<!--/row-->
 	</div>
+	
+ 
+<!-- Modal -->
+<div id="createCourseModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="createCourseModelLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="createCourseModelLabel">Create Course</h3>
+  </div>
+  <div class="modal-body">
+    <p>
+    	<form class="well" action="#" method="post" name="createCourseForm" id="createCourseForm">
+	    	<div class="alert alert-error" id="createClassErrors" style="display:none;">
+	    		There was an error while creating the class. Please check the data and retry.
+	    	</div>
+			<label>Name</label> 
+				<input name="name" class="span3" placeholder="Name" />
+			<label>Instructor</label> 
+				<input name="instructorName" id="instructorName" class="span3" 
+					placeholder="Who will instruct the course?"
+					data-provide="typeahead" />
+			<label>Description</label> 
+				<textarea name="description" class="span3" cols="100" rows="5" 
+					placeholder="Tell more about this wonderful course"></textarea>
+		</form>
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+    <button class="btn btn-primary" onclick="createCourse();">Create Course</button>
+  </div>
+</div>
+	
 </body>

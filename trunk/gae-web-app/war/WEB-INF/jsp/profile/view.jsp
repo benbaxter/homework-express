@@ -15,6 +15,8 @@
 			  <dd>****</dd>
 			  <dt>Role</dt>
 			  <dd>${user.role}</dd>
+			  <dt>Name</dt>
+			  <dd>${user.name}</dd>
 			  <dt>First Name</dt>
 			  <dd>${user.firstName}</dd>
 			  <dt>Last Name</dt>
