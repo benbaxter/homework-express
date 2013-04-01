@@ -22,8 +22,10 @@
 			</c:choose>
 			<a href="${homeUrl}"><i class="icon-home"></i>Home</a>
 			</li>
-         	<li><a href="#classes">Classes</a></li>
+			<!--
+			<li><a href="#classes">Classes</a></li>
           	<li><a href="#students">Students</a></li>
+          	-->
         </ul>
     	<ul class="nav pull-right">
 			<c:choose>

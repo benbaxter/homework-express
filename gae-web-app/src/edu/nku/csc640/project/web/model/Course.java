@@ -1,6 +1,7 @@
 package edu.nku.csc640.project.web.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class Course implements Serializable {
 	
@@ -8,6 +9,22 @@ public class Course implements Serializable {
 
 	String name;
 	String description;
+	User instructor;
+	List<User> students;
+	
+	
+	public User getInstructor() {
+		return instructor;
+	}
+	public void setInstructor(User instructor) {
+		this.instructor = instructor;
+	}
+	public List<User> getStudents() {
+		return students;
+	}
+	public void setStudents(List<User> students) {
+		this.students = students;
+	}
 	
 	public String getName() {
 		return name;

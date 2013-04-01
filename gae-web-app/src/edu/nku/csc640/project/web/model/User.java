@@ -13,7 +13,27 @@ public class User implements Serializable {
 	UserRole role;
 	String firstName;
 	String lastName;
+	String name;
 	
+	public String getRootUrl(User user) {
+		switch (user.getRole()) {
+		case ADMIN:
+			return "admin";
+		case INSTRUCTOR:
+			return "instructor";
+		case STUDENT:
+			return "student";
+		default:
+			return "student";
+		}
+	}
+	
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
 	public String getUsername() {
 		return username;
 	}
