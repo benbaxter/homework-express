@@ -6,74 +6,87 @@ public class User implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
-	String userId;
-	String username;
-	String password;
-	boolean rememberMe;
-	UserRole role;
-	String firstName;
-	String lastName;
+	String Username;
+	String Password;
+	UserRole Role;
+	String FirstName;
+	String LastName;
+
+	int userId;
 	String name;
+	boolean rememberMe;
 	
 	public String getRootUrl(User user) {
 		switch (user.getRole()) {
-		case ADMIN:
+		case Admin:
 			return "admin";
-		case INSTRUCTOR:
+		case Instructor:
 			return "instructor";
-		case STUDENT:
+		case Student:
 			return "student";
 		default:
 			return "student";
 		}
 	}
 	
+	public String getUsername() {
+		return Username;
+	}
+
+	public void setUsername(String username) {
+		Username = username;
+	}
+
+	public String getPassword() {
+		return Password;
+	}
+
+	public void setPassword(String password) {
+		Password = password;
+	}
+
+	public UserRole getRole() {
+		return Role;
+	}
+
+	public void setRole(UserRole role) {
+		Role = role;
+	}
+
+	public String getFirstName() {
+		return FirstName;
+	}
+
+	public void setFirstName(String firstName) {
+		FirstName = firstName;
+	}
+
+	public String getLastName() {
+		return LastName;
+	}
+
+	public void setLastName(String lastName) {
+		LastName = lastName;
+	}
+
+	public boolean isRememberMe() {
+		return rememberMe;
+	}
+
+	public void setRememberMe(boolean rememberMe) {
+		this.rememberMe = rememberMe;
+	}
+
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public String getPassword() {
-		return password;
-	}
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	public boolean isRememberMe() {
-		return rememberMe;
-	}
-	public void setRememberMe(boolean rememberMe) {
-		this.rememberMe = rememberMe;
-	}
-	public UserRole getRole() {
-		return role;
-	}
-	public void setRole(UserRole role) {
-		this.role = role;
-	}
-	public String getFirstName() {
-		return firstName;
-	}
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	public String getLastName() {
-		return lastName;
-	}
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	public String getUserId() {
+	public int getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 	
