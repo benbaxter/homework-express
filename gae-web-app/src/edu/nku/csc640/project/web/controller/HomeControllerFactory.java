@@ -22,11 +22,11 @@ public class HomeControllerFactory {
 	
 	public String goHome(User user, Model model, HttpSession session) {
 		switch (user.getRole()) {
-		case ADMIN:
+		case Admin:
 			return adminController.goHome(model, session);
-		case INSTRUCTOR:
+		case Instructor:
 			return instructorController.goHome(model, session);
-		case STUDENT:
+		case Student:
 			return studentController.goHome(model, session);
 		default:
 			return adminController.goHome(model, session);

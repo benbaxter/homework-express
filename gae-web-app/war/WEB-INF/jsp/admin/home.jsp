@@ -59,6 +59,7 @@
 					$("#createCourseModel").modal("hide");
 					loadCourses();
 				} else {
+					$("#createCourseReason").html(data.reason);
 					$("#createClassErrors").show();
 				}
 			},
@@ -152,7 +153,8 @@
     <p>
     	<form class="well" action="#" method="post" name="createCourseForm" id="createCourseForm">
 	    	<div class="alert alert-error" id="createClassErrors" style="display:none;">
-	    		There was an error while creating the class. Please check the data and retry.
+	    		There was an error while creating the course.<br />
+	    		<span id="createCourseReason"></span>
 	    	</div>
 			<label>Name</label> 
 				<input name="name" class="span3" placeholder="Name" />

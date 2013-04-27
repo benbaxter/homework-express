@@ -29,7 +29,7 @@
         </ul>
     	<ul class="nav pull-right">
 			<c:choose>
-				<c:when test="${not empty user}">
+				<c:when test="${not empty user.firstName}">
 					<c:choose>
 						<c:when test="${navPage eq 'profile'}">
 							<li class="active">
@@ -38,7 +38,7 @@
 							<li>
 						</c:otherwise>
 					</c:choose>
-					<a href="/actions/profile/edit/${user.userId}">Hello, ${user.username}</a></li>       
+					<a href="/actions/profile/edit/user.userId">Hello, ${user.firstName}</a></li>       
 					<li><a href="${logoutUrl}" class="navbar-link">Logout</a></li>
 				</c:when>  
 				<c:otherwise>
