@@ -32,65 +32,18 @@ public class AdminController extends BaseController {
 	
 	@Autowired
 	RestTemplate restTemplate;
-
+	
+	public AdminController() {
+		super();
+	}
+	
 	@RequestMapping(value="/admin/home", method=GET)
 	public String goHome(Model model, HttpSession session) { 
 		
 		model.addAttribute("navPage", "home");
-		model.addAttribute("sidebar", "courses");
 		
 		addMetaDataToModel(model, session);
 		return "admin/home";
-	}
-	
-	@RequestMapping(value="/admin/users/instructors", method=GET)
-	public String goToUsersInstructorsPage(Model model, HttpSession session) { 
-		model.addAttribute("navPage", "home");
-		model.addAttribute("sidebar", "instructors");
-		model.addAttribute("usertype", "instructors");
-		model.addAttribute("title", "Instructors");
-		model.addAttribute("subject", "Instructor");
-		addMetaDataToModel(model, session);
-		return "admin/users";
-	}
-	
-	@RequestMapping(value="/admin/users/students", method=GET)
-	public String goToUsersStudentsPage(Model model, HttpSession session) { 
-		model.addAttribute("navPage", "home");
-		model.addAttribute("sidebar", "students");
-		model.addAttribute("usertype", "students");
-		model.addAttribute("title", "Students");
-		model.addAttribute("subject", "Student");
-		addMetaDataToModel(model, session);
-		return "admin/users";
-	}
-	
-	@RequestMapping(value="/admin/users/admins", method=GET)
-	public String goToUsersAdminPage(Model model, HttpSession session) { 
-		model.addAttribute("navPage", "home");
-		model.addAttribute("sidebar", "admins");
-		model.addAttribute("usertype", "admins");
-		model.addAttribute("title", "Administrators");
-		model.addAttribute("subject", "Administrator");
-		addMetaDataToModel(model, session);
-		return "admin/users";
-	}
-	
-	@RequestMapping(value="/admin/ass/submitted", method=GET)
-	public String redirectAssignmentFormSubmitted(Model model, HttpSession session,
-			@RequestParam String uploaded) { 
-		
-		model.addAttribute("navPage", "home");
-		model.addAttribute("sidebar", "instructors");
-		
-		model.addAttribute("user", new User());
-		addMetaDataToModel(model, session);
-		
-		if( uploaded.equalsIgnoreCase("1") ) {
-			
-			return "admin/users";
-		}
-		return "admin/users";
 	}
 	
 	@RequestMapping(value="/admin/courses/create", method=POST)
@@ -115,13 +68,11 @@ public class AdminController extends BaseController {
 		course.setStudents(new ArrayList<User>());
 		
 		
-		String endpoint = "AddCourse";
-		Map<String, String> s = restTemplate.postForObject(BASE_URL + endpoint, course, Map.class);
+		String endpoint = BASE_URL + "AddCourse";
+		Map<String, String> s = restTemplate.postForObject(endpoint, course, Map.class);
 		return s;
 	}
 	
-
-	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/admin/users/create", method=POST)
 	public @ResponseBody Map<String, String> createUser(HttpSession session, 
 			@RequestParam String username,
@@ -137,32 +88,30 @@ public class AdminController extends BaseController {
 		user.setRole(UserRole.getFromString(role));
 		user.setUsername(username);
 
-		String endpoint = "admin/adduser";
-		Map<String, String> s = restTemplate.postForObject(BASE_URL + endpoint, 
-				user, 
-				Map.class);
+		String endpoint = BASE_URL + "admin/adduser";
+		Map<String, String> s = restTemplate.postForObject(endpoint, user, Map.class);
 		return s;
 	}
 	
 
 	@RequestMapping(value="/admin/instructors", method=GET)
 	public @ResponseBody List<Object> getAllInstructors(HttpSession session) throws Exception {
-		String endpoint = "admin/getusers?role=Instructor";
-		List<Object> result = restTemplate.getForObject(BASE_URL + endpoint, List.class);
+		String endpoint = BASE_URL + "admin/getusers?role=Instructor";
+		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		return result;
 	}
 	
 	@RequestMapping(value="/admin/students", method=GET)
 	public @ResponseBody List<Object> getAllStudents(HttpSession session) throws Exception {
-		String endpoint = "admin/getusers?role=Student";
-		List<Object> result = restTemplate.getForObject(BASE_URL + endpoint, List.class);
+		String endpoint = BASE_URL + "admin/getusers?role=Student";
+		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		return result;
 	}
 	
 	@RequestMapping(value="/admin/admins", method=GET)
 	public @ResponseBody List<Object> getAllAdmins(HttpSession session) throws Exception {
-		String endpoint = "admin/getusers?role=Admin";
-		List<Object> result = restTemplate.getForObject(BASE_URL + endpoint, List.class);
+		String endpoint = BASE_URL + "admin/getusers?role=Admin";
+		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		return result;
 	}
 	
@@ -177,8 +126,8 @@ public class AdminController extends BaseController {
 		} else {
 			Map<String, Long> params = new HashMap<String, Long>();
 			params.put("UserId", userId);
-			String endpoint = "admin/removeuser";
-			Map<String, String> result = restTemplate.postForObject(BASE_URL + endpoint, params, Map.class);
+			String endpoint = BASE_URL + "admin/removeuser";
+			Map<String, String> result = restTemplate.postForObject(endpoint, params, Map.class);
 			return result;
 		}
 	}
@@ -187,8 +136,8 @@ public class AdminController extends BaseController {
 	public @ResponseBody List<String> getAllInstructorsNames() {
 		List<String> users = new ArrayList<String>();
 		
-		String endpoint = "GetUsers";
-		List<Object> result = restTemplate.getForObject(BASE_URL + endpoint, List.class);
+		String endpoint = BASE_URL + "GetUsers";
+		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		if( ! isEmpty(result) ) {
 			Map<String, String> status = (Map<String, String>) result.get(0);
 			
@@ -210,8 +159,8 @@ public class AdminController extends BaseController {
 		
 		List<Course> courses = new ArrayList<Course>();
 		
-		String endpoint = "GetCourses";
-		List<Object> result = restTemplate.getForObject(BASE_URL + endpoint, List.class);
+		String endpoint = BASE_URL + "GetCourses";
+		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		if( ! isEmpty(result) ) {
 			Map<String, String> status = (Map<String, String>) result.get(0);
 			
@@ -252,8 +201,8 @@ public class AdminController extends BaseController {
 //		CommonsMultipartFile file = assignment.getFiles().get(0);
 //		endpointParams.put("file", file);
 		
-		String endpoint = "test";
-		List<Object> s = restTemplate.postForObject(BASE_URL + endpoint, endpointParams, List.class);
+		String endpoint = BASE_URL + "test";
+		List<Object> s = restTemplate.postForObject(endpoint, endpointParams, List.class);
 		return s;
 	}
 }

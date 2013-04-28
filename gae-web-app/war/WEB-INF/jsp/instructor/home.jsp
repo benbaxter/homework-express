@@ -1,8 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 
 <head>
-	<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
-  
 	<script type="text/javascript">
 	<!--
 	$(document).ready(function() {

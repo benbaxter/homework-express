@@ -30,6 +30,10 @@ public class LoginController extends BaseController {
 	@Autowired
 	RestTemplate restTemplate;
 	
+	public LoginController() {
+		super();
+	}
+	
 	@RequestMapping(value= {"/login", "/home", "/"}, method=GET)
 	public String login(Model model, HttpSession session) { 
 		

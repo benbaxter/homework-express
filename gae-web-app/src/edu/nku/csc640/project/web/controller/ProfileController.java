@@ -25,6 +25,10 @@ public class ProfileController extends BaseController {
 	@Autowired
 	RestTemplate restTemplate;
 	
+	public ProfileController() {
+		super();
+	}
+	
 	@RequestMapping(value="/profile/edit/{id}", method=GET)
 	public String edit(Model model, HttpSession session, @PathVariable String id) { 
 		

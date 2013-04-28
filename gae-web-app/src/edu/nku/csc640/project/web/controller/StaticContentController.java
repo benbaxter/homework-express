@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class StaticContentController extends BaseController {
 	
+	public StaticContentController() {
+		super();
+	}
+	
 	@RequestMapping(value= {"/you-suck"}, method=GET)
 	public String unauthed(Model model, HttpSession session) { 
 		
