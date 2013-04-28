@@ -21,6 +21,7 @@ import edu.nku.csc640.project.web.model.ProgramResult;
 import edu.nku.csc640.project.web.model.User;
 import edu.nku.csc640.project.web.model.UserRole;
 
+@SuppressWarnings("unchecked")
 public abstract class BaseController {
 	
 	protected static String BASE_URL = "http://csgcinlt151:5904/api/";
@@ -116,19 +117,40 @@ public abstract class BaseController {
 		String finalSubmitDate = (String) map.get("FinalSubmitDate");
 		assignment.setFinalSubmitDate(convertDate(finalSubmitDate));
 		List<Map<String, Object>> fs = (List<Map<String, Object>>) map.get("Files");
+		List<File> files = convertListOfFiles(fs);
+		assignment.setFiles(files);
+		Map<String, Object> compileResultList = (Map<String, Object>) map.get("CompileResult");
+		ProgramResult compileResult = createProgramResultFromResponse(compileResultList);
+		assignment.setCompileResult(compileResult);
+		List<Map<String, Object>> testResultList = (List<Map<String, Object>>) map.get("TestResults");
+		List<ProgramResult> testResults = convertListOfResults(testResultList);
+		assignment.setTestResults(testResults);
+		return assignment;
+	}
+
+	protected List<File> convertListOfFiles(List<Map<String, Object>> fs) {
+		List<File> files = new ArrayList<File>();
 		if( !isEmpty(fs) ) {
-			List<File> files = new ArrayList<File>();
 			for(Map<String, Object> f : fs) {
 				File file = createFileFromResponse(f);
 				files.add(file);
 			}
-			assignment.setFiles(files);
 		}
-		Map<String, Object> result = (Map<String, Object>) map.get("CompileResult");
-		if( !isEmpty(result) ) {
-			assignment.setResults(createProgramResultFromResponse(result));
+		return files;
+	}
+
+	protected List<ProgramResult> convertListOfResults(
+			List<Map<String, Object>> resultList) {
+		List<ProgramResult> results = new ArrayList<ProgramResult>();
+		if( !isEmpty(resultList) ) {
+			for(Map<String, Object> r : resultList) {
+				if(r != null ) {
+					ProgramResult result = createProgramResultFromResponse(r);
+					results.add(result);
+				}
+			}
 		}
-		return assignment;
+		return results;
 	}
 	
 	protected File createFileFromResponse(Map<String, Object> map) {
@@ -141,12 +163,16 @@ public abstract class BaseController {
 	}
 	
 	protected ProgramResult createProgramResultFromResponse(Map<String, Object> map) {
-		ProgramResult result = new ProgramResult();
-		result.setResult((String) map.get("ResultType")); 
-		result.setMessage((String) map.get("Message"));
-		result.setError((String) map.get("Error"));
-		result.setDate(convertDate((String) map.get("Date")));
-		return result;
+		if( map != null ) {
+			ProgramResult result = new ProgramResult();
+			result.setResult((String) map.get("ResultType")); 
+			result.setMessage((String) map.get("Message"));
+			result.setError((String) map.get("Error"));
+			result.setDate(convertDate((String) map.get("Date")));
+			return result;
+		} else {
+			return null;
+		}
 	}
 	
 	private Date convertDate(String dueDate) {
