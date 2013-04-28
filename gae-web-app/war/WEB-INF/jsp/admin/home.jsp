@@ -10,9 +10,6 @@
 		setUpTypeaheadInstructor();
 	});
 		
-	//This is an example of using server side data
-	//We can use this now to mock up the server call
-	//but we could use local instead until the .Net is built
 	function loadCourses() {
 		$.ajax({
 			url : "/actions/admin/courses",
@@ -62,25 +59,6 @@
 					$("#createCourseReason").html(data.reason);
 					$("#createClassErrors").show();
 				}
-			},
-			error : function(data) {
-				
-			}
-		});
-	}
-	
-	
-	//This is an example of using 'local' data
-	var newCoursesObj = [
-   		{ name: "The Red Violin", description: "new d" },
-   		{ name: "Eyes Wide Shut", description: "new d" },
-   		{ name: "The Inheritance", description: "new d" }
-   	];
-	function newCourses() {
-		$.ajax({
-			url : "/actions/admin/courses",
-			success : function(data) {
-				$("#course-template").tmpl( newCoursesObj ).appendTo( $("#courseList").empty() );
 			},
 			error : function(data) {
 				

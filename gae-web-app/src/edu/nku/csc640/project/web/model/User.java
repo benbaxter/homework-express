@@ -13,7 +13,6 @@ public class User implements Serializable {
 	String LastName;
 
 	int userId;
-	String name;
 	boolean rememberMe;
 	
 	public String getRootUrl(User user) {
@@ -77,12 +76,6 @@ public class User implements Serializable {
 		this.rememberMe = rememberMe;
 	}
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
 	public int getUserId() {
 		return userId;
 	}

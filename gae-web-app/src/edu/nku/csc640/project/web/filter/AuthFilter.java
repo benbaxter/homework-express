@@ -30,7 +30,7 @@ public class AuthFilter implements Filter {
 		whiteListSpringUrlsToNotFilter = new HashSet<String>();
 		whiteListSpringUrlsToNotFilter.add("/actions/login");
 		whiteListSpringUrlsToNotFilter.add("/actions/logout");
-		whiteListSpringUrlsToNotFilter.add("/actions/profile");
+//		whiteListSpringUrlsToNotFilter.add("/actions/profile");
 		whiteListSpringUrlsToNotFilter.add("/actions/you-suck");
 	}
 	
@@ -52,6 +52,8 @@ public class AuthFilter implements Filter {
 					chain.doFilter(request, response);
 			} else if( user.getRole() == Student
 					&& url.startsWith("/actions/student") ) {
+				chain.doFilter(request, response);
+			} else if(url.startsWith("/actions/profile")) {
 				chain.doFilter(request, response);
 			} else {
 				handleRedirect("/actions/you-suck", url, request, response, chain);

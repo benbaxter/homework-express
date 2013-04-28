@@ -1,13 +1,20 @@
 package edu.nku.csc640.project.web.controller;
 
 import static org.apache.commons.codec.binary.Base64.encodeBase64;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
 import org.springframework.ui.Model;
 
+import edu.nku.csc640.project.web.model.Assignment;
+import edu.nku.csc640.project.web.model.Course;
+import edu.nku.csc640.project.web.model.File;
 import edu.nku.csc640.project.web.model.User;
 import edu.nku.csc640.project.web.model.UserRole;
 
@@ -46,7 +53,7 @@ public abstract class BaseController {
 	}
 	
 	protected String encodeBase64User(HttpSession session) {
-		User user = (User) session.getAttribute(SESSION_ATTR_USER);
+		User user = getUser(session);
 		return encodeBase64User(user);
 	}
 	
@@ -69,5 +76,61 @@ public abstract class BaseController {
 		user.setRole(UserRole.getFromString((String) map.get("Role")));
 		user.setUsername((String) map.get("UserName"));
 		return user;
+	}
+	
+	protected Course createCourseFromResponse(Map<String, Object> map) {
+		Course course = new Course();
+		course.setId((int) map.get("Id"));
+		course.setName((String) map.get("Name"));
+		course.setDescription((String) map.get("Description"));
+		course.setInstructor(createUserFromResponse(((Map<String, Object>) map.get("Instructor"))));
+		List<Assignment> assignments = new ArrayList<Assignment>();
+		List<Map<String, Object>> asss = (List<Map<String, Object>>) map.get("Assignments");
+		for(Map<String, Object> a : asss ) {
+			Assignment ass = createAssignmentFromResponse(a);
+			assignments.add(ass);
+		}
+		course.setAssignments(assignments);
+		return course;
+	}
+	
+	protected Assignment createAssignmentFromResponse(Map<String, Object> map) {
+		Assignment assignment = new Assignment();
+		assignment.setId((int) map.get("Id"));
+		assignment.setName((String) map.get("Name"));
+		assignment.setDescription((String) map.get("Description"));
+		String dueDate = (String) map.get("DueDate");
+		assignment.setDueDate(convertDate(dueDate));
+		String finalSubmitDate = (String) map.get("FinalSubmitDate");
+		assignment.setFinalSubmitDate(convertDate(finalSubmitDate));
+		List<Map<String, Object>> fs = (List<Map<String, Object>>) map.get("Files");
+		if( !isEmpty(fs) ) {
+			List<File> files = new ArrayList<File>();
+			for(Map<String, Object> f : fs) {
+				File file = createFileFromResponse(f);
+				files.add(file);
+			}
+			assignment.setFiles(files);
+		}
+		return assignment;
+	}
+	
+	protected File createFileFromResponse(Map<String, Object> map) {
+		File file = new File();
+		file.setId((int) map.get("Id"));
+		file.setFileType((String) map.get("FileType"));
+		file.setName((String) map.get("FileName"));
+		file.setDateSubmitted(convertDate((String) map.get("Date")));
+		return file;
+	}
+	
+	private Date convertDate(String dueDate) {
+		dueDate = dueDate.replaceAll("[^0-9]", "");
+		Date d = new Date(Long.parseLong(dueDate));
+		return d;
+	}
+	
+	protected User getUser(HttpSession session) {
+		return (User) session.getAttribute(SESSION_ATTR_USER);
 	}
 }

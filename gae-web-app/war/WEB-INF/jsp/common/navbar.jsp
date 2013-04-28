@@ -38,7 +38,7 @@
 							<li>
 						</c:otherwise>
 					</c:choose>
-					<a href="/actions/profile/edit/user.userId">Hello, ${user.firstName}</a></li>       
+					<a href="/actions/profile/edit/${user.userId}">Hello, ${user.firstName}</a></li>       
 					<li><a href="${logoutUrl}" class="navbar-link">Logout</a></li>
 				</c:when>  
 				<c:otherwise>
