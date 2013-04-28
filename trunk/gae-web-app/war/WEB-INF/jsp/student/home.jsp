@@ -1,14 +1,6 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 
 <head>
-	<style type="text/css">
-	.table tbody tr:hover {
-	    cursor: pointer;
-	}
-	</style>
-
-	<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
-  
 	<script type="text/javascript">
 	<!--
 	$(document).ready(function() {
@@ -42,25 +34,26 @@
 </head>
 
 <body>
-	<div class="container-fluid">
-		<div class="hero-unit">
-			<h2 id="mainContentTitle">Courses</h2>
-			<p>
-			<table class="table table-hover table-bordered table-striped"
-				width="100%">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Instructor</th>
-						<th>Description</th>
-					</tr>
-				</thead>
-				<tbody id="courseList">
-					<tr><td>Could not load courses</td></tr>
-				</tbody>
-			</table>
-			</p>
-		</div>
+	<div class="container-fluid maincontent">
+		<h2 id="mainContentTitle">Courses</h2>
+		<p>
+		<table
+			class="table table-hover table-bordered table-striped table-clickable"
+			width="100%">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Instructor</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody id="courseList">
+				<tr>
+					<td>Could not load courses</td>
+				</tr>
+			</tbody>
+		</table>
+		</p>
 	</div>
-		
+
 </body>

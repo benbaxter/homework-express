@@ -23,6 +23,10 @@ public class InstructorController extends BaseController {
 	
 	protected static final String root = "/instructor";
 	
+	public InstructorController() {
+		super();
+	}
+	
 	@RequestMapping(value={root+"/home", root}, method=GET)
 	public String goHome(Model model, HttpSession session) { 
 		

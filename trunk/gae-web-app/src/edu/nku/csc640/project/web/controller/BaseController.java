@@ -12,15 +12,18 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.ui.Model;
 
+import com.google.appengine.api.utils.SystemProperty;
+
 import edu.nku.csc640.project.web.model.Assignment;
 import edu.nku.csc640.project.web.model.Course;
 import edu.nku.csc640.project.web.model.File;
+import edu.nku.csc640.project.web.model.ProgramResult;
 import edu.nku.csc640.project.web.model.User;
 import edu.nku.csc640.project.web.model.UserRole;
 
 public abstract class BaseController {
 	
-	protected static final String BASE_URL = "http://csgcinlt151:5904/api/";
+	protected static String BASE_URL = "http://csgcinlt151:5904/api/";
 //	protected static final String BASE_URL = "http://www.csc640.com/api/";
 	protected static final String RESPONSE_STATUS = "Status";
 	protected static final String RESPONSE_REASON = "Reason";
@@ -30,6 +33,15 @@ public abstract class BaseController {
 
 	protected static final String SESSION_ATTR_USER = "user";
 
+	public BaseController() {
+		if (SystemProperty.environment.value() ==
+			    SystemProperty.Environment.Value.Production) {
+			BASE_URL = "http://www.csc640.com/api/";
+		} else {
+			BASE_URL = "http://csgcinlt151:5904/api/";
+		}
+	}
+	
 	protected Model addMetaDataToModel(Model model, HttpSession session) {
 		User user = (User) session.getAttribute(SESSION_ATTR_USER);
 		if( ! isLoggedIn(user) ) {
@@ -112,6 +124,10 @@ public abstract class BaseController {
 			}
 			assignment.setFiles(files);
 		}
+		Map<String, Object> result = (Map<String, Object>) map.get("CompileResult");
+		if( !isEmpty(result) ) {
+			assignment.setResults(createProgramResultFromResponse(result));
+		}
 		return assignment;
 	}
 	
@@ -122,6 +138,15 @@ public abstract class BaseController {
 		file.setName((String) map.get("FileName"));
 		file.setDateSubmitted(convertDate((String) map.get("Date")));
 		return file;
+	}
+	
+	protected ProgramResult createProgramResultFromResponse(Map<String, Object> map) {
+		ProgramResult result = new ProgramResult();
+		result.setResult((String) map.get("ResultType")); 
+		result.setMessage((String) map.get("Message"));
+		result.setError((String) map.get("Error"));
+		result.setDate(convertDate((String) map.get("Date")));
+		return result;
 	}
 	
 	private Date convertDate(String dueDate) {
