@@ -6,13 +6,13 @@
 	<script type="text/javascript">
 	<!--
 	$(document).ready(function() {
-		loadInstructors();
+		loadUsers();
 		setUpTypeaheadInstructor();
 	});
 		
-	function loadInstructors() {
+	function loadUsers() {
 		$.ajax({
-			url : "/actions/admin/instructors",
+			url : "/actions/admin/${usertype}",
 				
 			beforeSend: function (xhr) { 
 				//xhr.setRequestHeader ("Authorization", make_base_auth(getCookie("username"), getCookie("password")));
@@ -22,15 +22,10 @@
 			success : function(data) {
 				if( data[0].Status == "Success" ) {
 					$("#user-template").tmpl( data[1] ).appendTo( $("#userList").empty() );
-					$("#mainContentTitle").html("Instructors");
 				} else {
-					$("#mainContentTitle").html("Exception Occured");
 					$("#loadUserReason").html(data[0].Reason);
 					$("#loadUserErrors").show();
 				}
-			},
-			error : function(data) {
-				
 			}
 		});
 	}
@@ -62,7 +57,7 @@
 					$("#createUserErrors").hide();
 					$("#addUserModel").modal("hide");
 					$("#addUserForm")[0].reset();
-					loadInstructors();
+					loadUsers();
 				} else {
 					$("#addUserReason").html(data.Reason);
 					$("#createUserErrors").show();
@@ -81,7 +76,7 @@
 			type : "get",
 			success : function(data) {
 				if( data.Status == "Success" ) {
-					loadInstructors();
+					loadUsers();
 				} else {
 					$("#loadUserReason").html(data.Reason);
 					$("#loadUserErrors").show();
@@ -96,7 +91,7 @@
 	<script type="text/template" id="user-template">
       <tr>
 		<td>
-			<a href="#"><i class="icon-pencil"></i></a>
+			<a href="/actions/profile/edit/\${UserId}"><i class="icon-pencil"></i></a>
 			<a href="javascript: deleteUser(\${UserId})"><i class="icon-trash"></i></a>
 		</td>
 		<td>\${FirstName} \${LastName}</td>
@@ -114,14 +109,14 @@
 			<!--/span-->
 			<div class="span9">
 				<div class="hero-unit">
-					<h2 id="mainContentTitle">Could not load section</h2>
+					<h2 id="mainContentTitle">${title}</h2>
 					<p>
 					<div class="alert alert-error" id="loadUserErrors" style="display:none;">
 			    		<span id="loadUserReason"></span>
 			    	</div>
 					<a href="#addUserModel" role="button" 
 						class="btn btn-info btn-small" data-toggle="modal">
-						<i class="icon-plus"></i>Add Instructor
+						<i class="icon-plus"></i>Add ${subject}
 					</a>
 					<table class="table table-hover table-bordered table-striped"
 						width="100%">
@@ -173,13 +168,6 @@
 					<br /> <br />
 				<input type="file" name="files[0]" id="files[0]" class="span3" />
 				<input type="file" name="files[1]" id="files[1]" class="span3" />
-		</form>
-		<form method="post" name="addUserForm"  onsubmit="javascript: addUser();"
-			enctype="multipart/form-data" action="http://csgcinlt151:49467/api/test">
-			<input name="site" type="hidden" value="http://localhost:8888/actions/admin/ass/submitted" />
-			<input name="file" type="file" />
-			<input type="submit" value="Create Assignment" class="btn btn-primary" />
-			<button class="btn btn-primary" onclick="addUser();">Create User</button>
 		</form>
 		-->
 		<form name="addUserForm" id="addUserForm" class="well" action="/actions/admin/users/create" method="post">

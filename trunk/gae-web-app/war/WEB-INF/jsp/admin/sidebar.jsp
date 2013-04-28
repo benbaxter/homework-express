@@ -18,7 +18,7 @@
 			<li><a href="<c:url value="${studentLink}" />">Students</a></li>
 			<li><a href="<c:url value="${adminLink}" />">Administrators</a></li>
 		  </c:when>
-		  <c:when test="${sidebar == 'admin'}">
+		  <c:when test="${sidebar == 'admins'}">
 		  	<li><a href="<c:url value="/actions/admin/home"/>">Courses</a></li>
 			<li><a href="<c:url value="${instructorLink}" />">Instructors</a></li>
 			<li><a href="<c:url value="${studentLink}" />">Students</a></li>

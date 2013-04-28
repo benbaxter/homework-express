@@ -1,34 +1,25 @@
 package edu.nku.csc640.project.web.controller;
 
-import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.CollectionUtils.isEmpty;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
-import static org.springframework.util.CollectionUtils.isEmpty;
-import java.io.File;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import edu.nku.csc640.project.web.model.Assignment;
 import edu.nku.csc640.project.web.model.Course;
@@ -39,15 +30,8 @@ import edu.nku.csc640.project.web.model.UserRole;
 @Controller
 public class AdminController extends BaseController {
 	
-	List<Course> courses;
-
 	@Autowired
 	RestTemplate restTemplate;
-	
-	public AdminController() {
-		courses = new ArrayList<>();
-		setupCourses();
-	}
 
 	@RequestMapping(value="/admin/home", method=GET)
 	public String goHome(Model model, HttpSession session) { 
@@ -63,6 +47,9 @@ public class AdminController extends BaseController {
 	public String goToUsersInstructorsPage(Model model, HttpSession session) { 
 		model.addAttribute("navPage", "home");
 		model.addAttribute("sidebar", "instructors");
+		model.addAttribute("usertype", "instructors");
+		model.addAttribute("title", "Instructors");
+		model.addAttribute("subject", "Instructor");
 		addMetaDataToModel(model, session);
 		return "admin/users";
 	}
@@ -71,6 +58,9 @@ public class AdminController extends BaseController {
 	public String goToUsersStudentsPage(Model model, HttpSession session) { 
 		model.addAttribute("navPage", "home");
 		model.addAttribute("sidebar", "students");
+		model.addAttribute("usertype", "students");
+		model.addAttribute("title", "Students");
+		model.addAttribute("subject", "Student");
 		addMetaDataToModel(model, session);
 		return "admin/users";
 	}
@@ -78,7 +68,10 @@ public class AdminController extends BaseController {
 	@RequestMapping(value="/admin/users/admins", method=GET)
 	public String goToUsersAdminPage(Model model, HttpSession session) { 
 		model.addAttribute("navPage", "home");
-		model.addAttribute("sidebar", "admin");
+		model.addAttribute("sidebar", "admins");
+		model.addAttribute("usertype", "admins");
+		model.addAttribute("title", "Administrators");
+		model.addAttribute("subject", "Administrator");
 		addMetaDataToModel(model, session);
 		return "admin/users";
 	}
@@ -100,35 +93,6 @@ public class AdminController extends BaseController {
 		return "admin/users";
 	}
 	
-//	@RequestMapping(value="/admin/instructors", method=GET)
-//	public @ResponseBody List<User> getAllInstructors() {
-//		List<User> users = new ArrayList<User>();
-//		
-//		User instructor1 = new User();
-//		instructor1.setName("Dr. Kevorkian");
-//		users.add(instructor1);
-//
-//		User instructor2 = new User();
-//		instructor2.setName("Dr. Pepper");
-//		users.add(instructor2);
-//		
-//		return users;
-//	}
-	
-//	@RequestMapping(value="/admin/instructors/names", method=GET)
-//	public @ResponseBody List<String> getAllInstructorsNames() {
-//		List<String> users = new ArrayList<String>();
-//		users.add("Dr. Kevorkian");
-//		users.add("Dr. Pepper");
-//		
-//		return users;
-//	}
-	
-//	@RequestMapping(value="/admin/courses", method=GET, produces="application/json")
-//	public @ResponseBody List<Course> getAllCourses() {
-//		return courses;
-//	}
-
 	@RequestMapping(value="/admin/courses/create", method=POST)
 	public @ResponseBody Map<String, String> createCourses(
 			@RequestParam String name,
@@ -146,7 +110,6 @@ public class AdminController extends BaseController {
 		course.setName(name);
 		course.setDescription(description);
 		User instructor = new User();
-		instructor.setName(instructorName);
 		course.setInstructor(instructor);
 		
 		course.setStudents(new ArrayList<User>());
@@ -189,16 +152,37 @@ public class AdminController extends BaseController {
 		return result;
 	}
 	
-	@RequestMapping(value="/admin/users/delete/{userId}", method=GET)
-	public @ResponseBody Map<String, String> deleteUser(@PathVariable long userId) {
-		Map<String, Long> params = new HashMap<String, Long>();
-		params.put("UserId", userId);
-		String endpoint = "admin/removeuser";
-		Map<String, String> result = restTemplate.postForObject(BASE_URL + endpoint, params, Map.class);
+	@RequestMapping(value="/admin/students", method=GET)
+	public @ResponseBody List<Object> getAllStudents(HttpSession session) throws Exception {
+		String endpoint = "admin/getusers?role=Student";
+		List<Object> result = restTemplate.getForObject(BASE_URL + endpoint, List.class);
 		return result;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@RequestMapping(value="/admin/admins", method=GET)
+	public @ResponseBody List<Object> getAllAdmins(HttpSession session) throws Exception {
+		String endpoint = "admin/getusers?role=Admin";
+		List<Object> result = restTemplate.getForObject(BASE_URL + endpoint, List.class);
+		return result;
+	}
+	
+	@RequestMapping(value="/admin/users/delete/{userId}", method=GET)
+	public @ResponseBody Map<String, String> deleteUser(@PathVariable long userId, HttpSession session) {
+		
+		if( userId == getUser(session).getUserId() ) {
+			Map<String, String> result = new HashMap<String, String>();
+			result.put(RESPONSE_STATUS, RESPONSE_STATUS_FAILED);
+			result.put(RESPONSE_REASON, "Cannot delete yourself.");
+			return result;
+		} else {
+			Map<String, Long> params = new HashMap<String, Long>();
+			params.put("UserId", userId);
+			String endpoint = "admin/removeuser";
+			Map<String, String> result = restTemplate.postForObject(BASE_URL + endpoint, params, Map.class);
+			return result;
+		}
+	}
+	
 	@RequestMapping(value="/admin/instructors/names", method=GET)
 	public @ResponseBody List<String> getAllInstructorsNames() {
 		List<String> users = new ArrayList<String>();
@@ -239,7 +223,6 @@ public class AdminController extends BaseController {
 				
 				Map<String, String> i = (Map<String,String>)c.get("Instructor");
 				User instructor = new User();
-				instructor.setName(i.get("FirstName") + " " + i.get("LastName"));
 				course.setInstructor(instructor);
 				
 				List<User> students = new ArrayList<>();
@@ -266,49 +249,11 @@ public class AdminController extends BaseController {
 	public @ResponseBody List<Object> createAssignment(Assignment assignment, BindingResult result) {
 
 		Map<String, Object> endpointParams = new HashMap<String, Object>();
-		CommonsMultipartFile file = assignment.getFiles().get(0);
-		endpointParams.put("file", file);
+//		CommonsMultipartFile file = assignment.getFiles().get(0);
+//		endpointParams.put("file", file);
 		
 		String endpoint = "test";
 		List<Object> s = restTemplate.postForObject(BASE_URL + endpoint, endpointParams, List.class);
 		return s;
 	}
-
-	private void setupCourses() {
-		User instructor1 = new User();
-//		instructor1.setName("Dr. Kevorkian");
-		User instructor2 = new User();
-//		instructor2.setName("Dr. Pepper");
-		
-		Course c1 = new Course();
-		c1.setName("INF 101");
-		c1.setDescription("This course is awesome");
-		c1.setInstructor(instructor1);
-		courses.add(c1);
-		
-		Course c2 = new Course();
-		c2.setName("INF 102");
-		c2.setDescription("This course is awesome");
-		c2.setInstructor(instructor1);
-		courses.add(c2);
-		
-		Course c3 = new Course();
-		c3.setName("INF 103");
-		c3.setDescription("This course is awesome");
-		c3.setInstructor(instructor2);
-		courses.add(c3);
-		
-		Course c4 = new Course();
-		c4.setName("INF 104");
-		c4.setDescription("This course is awesome");
-		c4.setInstructor(instructor2);
-		courses.add(c4);
-		
-		Course c5 = new Course();
-		c5.setName("INF 105");
-		c5.setDescription("This course is awesome");
-		c5.setInstructor(instructor1);
-		courses.add(c5);
-	}
-
 }

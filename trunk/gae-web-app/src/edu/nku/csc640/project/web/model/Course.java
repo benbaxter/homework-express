@@ -7,12 +7,25 @@ public class Course implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
+	int id;
 	String name;
 	String description;
 	User instructor;
 	List<User> students;
+	List<Assignment> assignments;
 	
-	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public List<Assignment> getAssignments() {
+		return assignments;
+	}
+	public void setAssignments(List<Assignment> assignments) {
+		this.assignments = assignments;
+	}
 	public User getInstructor() {
 		return instructor;
 	}
