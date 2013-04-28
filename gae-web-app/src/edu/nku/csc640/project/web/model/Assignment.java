@@ -15,7 +15,8 @@ public class Assignment implements Serializable {
 	Date dueDate;
 	Date finalSubmitDate;
 	List<String> fileNames;
-	ProgramResult results;
+	ProgramResult compileResult;
+	List<ProgramResult> testResults;
 	
 	public int getId() {
 		return id;
@@ -62,10 +63,16 @@ public class Assignment implements Serializable {
 	public void setFinalSubmitDate(Date finalSubmitDate) {
 		this.finalSubmitDate = finalSubmitDate;
 	}
-	public ProgramResult getResults() {
-		return results;
+	public ProgramResult getCompileResult() {
+		return compileResult;
 	}
-	public void setResults(ProgramResult results) {
-		this.results = results;
+	public void setCompileResult(ProgramResult compileResult) {
+		this.compileResult = compileResult;
+	}
+	public List<ProgramResult> getTestResults() {
+		return testResults;
+	}
+	public void setTestResults(List<ProgramResult> testResults) {
+		this.testResults = testResults;
 	}
 }

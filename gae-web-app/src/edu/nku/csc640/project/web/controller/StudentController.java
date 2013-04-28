@@ -178,6 +178,17 @@ public class StudentController extends BaseController {
 		}
 		return map;
 	}
+	
+	@RequestMapping(value="/student/assignment/{assignmentid}/cancel-compile", method=GET)
+	public @ResponseBody Map<String, String> cancelCompile(Model model, HttpSession session,
+			@PathVariable long assignmentid) {
+		User user = getUser(session);
+		String endpoint = BASE_URL + "student/cancelcompile?" +
+				"userid=" + user.getUserId() + 
+				"&assignmentid=" + assignmentid +
+				"&initiatedby=" + user.getUserId(); 
+		return restTemplate.getForObject(endpoint,  Map.class);
+	}
 
 	@RequestMapping(value="/student/assignment/{assignmentid}/run-program", method=GET)
 	public @ResponseBody Map<String, Object> runProgram(Model model, HttpSession session,
@@ -206,19 +217,30 @@ public class StudentController extends BaseController {
 			@PathVariable long assignmentid) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		User user = getUser(session);
-		String endpoint = BASE_URL + "student/gettestresult?" +
+		String endpoint = BASE_URL + "student/gettestresults?" +
 				"userid=" + user.getUserId() + 
 				"&assignmentid=" + assignmentid; 
 		List<Object> list = restTemplate.getForObject(endpoint,  List.class);
 		if( ! isEmpty(list) ) {
 			Map<String, String> s = (Map<String, String>) list.get(0);
 			if( RESPONSE_STATUS_SUCCESS.equalsIgnoreCase(s.get(RESPONSE_STATUS)) ) {
-				ProgramResult result = createProgramResultFromResponse((Map<String, Object>) list.get(1));
-				map.put("result", result);
+				List<ProgramResult> results = convertListOfResults(((List<Map<String, Object>>) list.get(1)));
+				map.put("results", results);
 			} else {
 				map.put("failed", s.get(RESPONSE_REASON) ); 
 			}
 		}
 		return map;
+	}
+	
+	@RequestMapping(value="/student/assignment/{assignmentid}/cancel-program", method=GET)
+	public @ResponseBody Map<String, String> cancelRunningProgram(Model model, HttpSession session,
+			@PathVariable long assignmentid) {
+		User user = getUser(session);
+		String endpoint = BASE_URL + "student/canceltest?" +
+				"userid=" + user.getUserId() + 
+				"&assignmentid=" + assignmentid +
+				"&initiatedby=" + user.getUserId(); 
+		return restTemplate.getForObject(endpoint,  Map.class);
 	}
 }

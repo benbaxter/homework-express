@@ -8,6 +8,7 @@
 	var currentProcessRunning;
 	
 	function prepareModalForProcessInformation() {
+		$("#results-section").show();
 		$('#waitingModel').modal('show');
 		$('#cancelProcessBtn').removeClass("disabled");
 		$("#processing-template").tmpl().appendTo( $("#status-message").empty() );
@@ -32,7 +33,7 @@
 			url : "/actions/student/assignment/${assignment.id}/compile-status",
 			success : function(data) {
 				var done = data[1].Status;
-				while(done == "InProgress") {
+				while( done == "InProgress") {
 					done = checkCompileStatus();
 				}
 				if( done && done != "InProgress" ){
@@ -50,7 +51,7 @@
 			success : function(data) {
 				if( data.result ) {
 					data.result.date = formatDate(data.result.date);
-				    $("#result-template").tmpl( data.result ).appendTo( $("#resultData").empty() );
+				    $("#result-template").tmpl( data.result ).appendTo( $("#compileResultData").empty() );
 				}
 			}
 		});
@@ -75,7 +76,7 @@
 			url : "/actions/student/assignment/${assignment.id}/run-program-status",
 			success : function(data) {
 				var done = data[1].Status;
-				while(done == "InProgress") {
+				while( done == "InProgress") {
 					done = checkTestProgramStatus();
 				}
 				if( done && done != "InProgress" ){
@@ -91,9 +92,11 @@
 		$.ajax({
 			url : "/actions/student/assignment/${assignment.id}/run-program-result",
 			success : function(data) {
-				if( data.result ) {
-					data.result.date = formatDate(data.result.date);
-				    $("#result-template").tmpl( data.result ).appendTo( $("#resultData").empty() );
+				if( data.results ) {
+					$.each(data.results, function(index, value) {
+						data.results[index].date = formatDate(value.date); 
+					});
+				    $("#result-template").tmpl( data.results ).appendTo( $("#testResultData").empty() );
 				}
 			}
 		});
@@ -102,13 +105,20 @@
 	function cancelProcess(){
 		if( currentProcessRunning == "compile" ) {
 			$.ajax({
-				url : "/actions/student/assignment/${assignment.id}/compilestatus",
+				url : "/actions/student/assignment/${assignment.id}/cancel-compile",
 				success : function(data) {
-					
+					//$('#status-message').html("Compiled Canceled.");
+					$('#cancelProcessBtn').addClass("disabled")
 				}
 			});
 		} else {
-			
+			$.ajax({
+				url : "/actions/student/assignment/${assignment.id}/cancel-program",
+				success : function(data) {
+					//$('#status-message').html("Program Canceled.");
+					$('#cancelProcessBtn').addClass("disabled")	
+				}
+			});
 		}
 	}
 	
@@ -169,29 +179,51 @@
 						pattern="MM-dd-yyyy" /></span>
 			</div>
 		</div>
-		<c:if test="${not empty assignment.results}">
-			<c:if test="${not empty assignment.results.result}">
-				<c:set var="result" value="${assignment.results}" />
-				<div class="assignment-result">
-					<table class="table table-bordered">
-						<tbody id="resultData">
+		<c:set var="displayResults" value="none" />
+		<c:if test="${not empty assignment.testResults}">
+			<c:if test="${not empty assignment.compileResult}">
+				<c:set var="displayResults" value="" />
+			</c:if>
+		</c:if>
+			<div class="assignment-result" id="results-section" style="display: ${displayResults}">
+				<c:set var="compileResult" value="${assignment.compileResult}" />
+				<table class="table table-bordered">
+					<caption>Compile Results</caption>
+					<tbody id="compileResultData">
+						<tr>
+							<th>Result</th>
+							<td>${compileResult.result}</td>
+							<th>Error</th>
+							<td class="control-group error"><span class="control-label">${compileResult.error}</span></td>
+						</tr>
+						<tr>
+							<th>Message</th>
+							<td>${compileResult.message}</td>
+							<th>Date Last Ran</th>
+							<td><fmt:formatDate value="${compileResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" /></td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table table-bordered">
+					<caption>Test Results</caption>
+					<tbody id="testResultData">
+						<c:forEach var="testResult" items="${assignment.testResults}">
 							<tr>
 								<th>Result</th>
-								<td>${result.result}</td>
+								<td>${testResult.result}</td>
 								<th>Error</th>
-								<td class="control-group error"><span class="control-label">${result.error}</span></td>
+								<td class="control-group error"><span class="control-label">${testResult.error}</span></td>
 							</tr>
 							<tr>
 								<th>Message</th>
-								<td>${result.message}</td>
+								<td>${testResult.message}</td>
 								<th>Date Last Ran</th>
-								<td><fmt:formatDate value="${result.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" /></td>
+								<td><fmt:formatDate value="${testResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" /></td>
 							</tr>
-						</tbody>
-					</table>
-				</div>
-			</c:if>
-		</c:if>
+						</c:forEach>
+					</tbody>
+				</table>
+			</div>
 		<table class="table table-hover table-bordered table-striped"
 			width="100%">
 			<thead>
