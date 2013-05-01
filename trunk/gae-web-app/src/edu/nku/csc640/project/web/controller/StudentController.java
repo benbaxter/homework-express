@@ -114,7 +114,7 @@ public class StudentController extends BaseController {
 				model.addAttribute("courseid", courseid);
 				model.addAttribute("navPage", "home");
 				model.addAttribute("submitUrl", BASE_URL + "student/addfiletoassignment");
-				model.addAttribute("callBackUrl", "http://localhost:8888/actions/student/course/" + courseid + "/assignment/" + assignmentid + "/submitted");
+				model.addAttribute("callBackUrl", OUR_URL + "actions/student/course/" + courseid + "/assignment/" + assignmentid + "/submitted");
 				addMetaDataToModel(model, session);
 				return "student/submit-assignment";
 			} else {
