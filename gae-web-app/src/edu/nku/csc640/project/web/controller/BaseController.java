@@ -37,7 +37,7 @@ public abstract class BaseController {
 	public BaseController() {
 		if (SystemProperty.environment.value() ==
 			    SystemProperty.Environment.Value.Production) {
-			BASE_URL = "http://www.csc640.com/api/";
+			BASE_URL = "http://www.csc640.com/homeworkexpress/api/";
 		} else {
 			BASE_URL = "http://csgcinlt151:5904/api/";
 		}

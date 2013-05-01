@@ -32,6 +32,7 @@ public class AuthFilter implements Filter {
 		whiteListSpringUrlsToNotFilter.add("/actions/logout");
 //		whiteListSpringUrlsToNotFilter.add("/actions/profile");
 		whiteListSpringUrlsToNotFilter.add("/actions/you-suck");
+		whiteListSpringUrlsToNotFilter.add("/actions/something-bad-happened");
 	}
 	
 	@Override
