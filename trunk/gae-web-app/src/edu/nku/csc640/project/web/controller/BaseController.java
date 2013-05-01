@@ -97,13 +97,25 @@ public abstract class BaseController {
 		course.setName((String) map.get("Name"));
 		course.setDescription((String) map.get("Description"));
 		course.setInstructor(createUserFromResponse(((Map<String, Object>) map.get("Instructor"))));
-		List<Assignment> assignments = new ArrayList<Assignment>();
-		List<Map<String, Object>> asss = (List<Map<String, Object>>) map.get("Assignments");
-		for(Map<String, Object> a : asss ) {
-			Assignment ass = createAssignmentFromResponse(a);
-			assignments.add(ass);
+		List<Map<String, Object>> ss = (List<Map<String, Object>>) map.get("Users");
+		if( ! isEmpty(ss) ) { 
+			List<User> students = new ArrayList<User>();
+			for(Map<String, Object> s : ss ) {
+				User stud = createUserFromResponse(s);
+				students.add(stud);
+			}
+			course.setStudents(students);
 		}
-		course.setAssignments(assignments);
+		
+		List<Map<String, Object>> asss = (List<Map<String, Object>>) map.get("Assignments");
+		if( ! isEmpty(asss) ) {
+			List<Assignment> assignments = new ArrayList<Assignment>();
+			for(Map<String, Object> a : asss ) {
+				Assignment ass = createAssignmentFromResponse(a);
+				assignments.add(ass);
+			}
+			course.setAssignments(assignments);
+		}
 		return course;
 	}
 	

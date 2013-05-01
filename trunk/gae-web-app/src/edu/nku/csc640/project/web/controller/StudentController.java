@@ -28,6 +28,8 @@ import edu.nku.csc640.project.web.model.User;
 @Controller
 public class StudentController extends BaseController {
 	
+	protected static final String root = "/student";
+	
 	@Autowired
 	RestTemplate restTemplate;
 	
@@ -35,7 +37,7 @@ public class StudentController extends BaseController {
 		super();
 	}
 	
-	@RequestMapping(value="/student/home", method=GET)
+	@RequestMapping(value= root + "/home", method=GET)
 	public String goHome(Model model, HttpSession session) { 
 		model.addAttribute("navPage", "home");
 		model.addAttribute("user", getUser(session));
@@ -43,13 +45,13 @@ public class StudentController extends BaseController {
 		return "student/home";
 	}	
 	
-	@RequestMapping(value="/student/{id}/courses", method=GET)
+	@RequestMapping(value= root + "/{id}/courses", method=GET)
 	public @ResponseBody List<Object> getCourses(@PathVariable long id) {
-		String endpoint = BASE_URL + "student/getcourses?studentid=" + id; 
+		String endpoint = BASE_URL + "student/getcourses?userid=" + id; 
 		return restTemplate.getForObject(endpoint, List.class);
 	}
 	
-	@RequestMapping(value="/student/courses/{id}", method=GET)
+	@RequestMapping(value= root + "/courses/{id}", method=GET)
 	public String getCourse(Model model, HttpSession session, @PathVariable long id) { 
 		
 		String endpoint = BASE_URL + "student/getcourse?courseid=" + id; 
@@ -71,7 +73,7 @@ public class StudentController extends BaseController {
 		}
 	}
 	
-	@RequestMapping(value="/student/course/{courseid}/assignment/{assignmentid}", method=GET)
+	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}", method=GET)
 	public String getAssignment(Model model, HttpSession session,
 			@PathVariable long courseid, @PathVariable long assignmentid) { 
 		
@@ -96,7 +98,7 @@ public class StudentController extends BaseController {
 		}
 	}
 	
-	@RequestMapping(value="/student/course/{courseid}/assignment/{assignmentid}/submit", method=GET)
+	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/submit", method=GET)
 	public String submitAssignment(Model model, HttpSession session,
 			@PathVariable long courseid, @PathVariable long assignmentid) { 
 		
@@ -123,7 +125,7 @@ public class StudentController extends BaseController {
 		}
 	}
 	
-	@RequestMapping(value="/student/course/{courseid}/assignment/{assignmentid}/submitted", method=GET)
+	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/submitted", method=GET)
 	public String submitAssignment(Model model, HttpSession session, 
 			@PathVariable long courseid, @PathVariable long assignmentid, 
 			@RequestParam(value=RESPONSE_STATUS) String status,
@@ -136,7 +138,7 @@ public class StudentController extends BaseController {
 		}
 	}
 	
-	@RequestMapping(value="/student/assignment/{assignmentid}/compile-program", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/compile-program", method=GET)
 	public @ResponseBody Map<String, Object> compileProgram(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		User user = getUser(session);
@@ -147,7 +149,7 @@ public class StudentController extends BaseController {
 		return restTemplate.getForObject(endpoint,  Map.class);
 	}
 	
-	@RequestMapping(value="/student/assignment/{assignmentid}/compile-status", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/compile-status", method=GET)
 	public @ResponseBody List<Object> getCompileStatus(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		User user = getUser(session);
@@ -158,7 +160,7 @@ public class StudentController extends BaseController {
 		return restTemplate.getForObject(endpoint,  List.class);
 	}
 	
-	@RequestMapping(value="/student/assignment/{assignmentid}/compile-result", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/compile-result", method=GET)
 	public @ResponseBody Map<String, Object> getCompileResult(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -179,7 +181,7 @@ public class StudentController extends BaseController {
 		return map;
 	}
 	
-	@RequestMapping(value="/student/assignment/{assignmentid}/cancel-compile", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/cancel-compile", method=GET)
 	public @ResponseBody Map<String, String> cancelCompile(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		User user = getUser(session);
@@ -190,7 +192,7 @@ public class StudentController extends BaseController {
 		return restTemplate.getForObject(endpoint,  Map.class);
 	}
 
-	@RequestMapping(value="/student/assignment/{assignmentid}/run-program", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/run-program", method=GET)
 	public @ResponseBody Map<String, Object> runProgram(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		User user = getUser(session);
@@ -201,7 +203,7 @@ public class StudentController extends BaseController {
 		return restTemplate.getForObject(endpoint,  Map.class);
 	}
 	
-	@RequestMapping(value="/student/assignment/{assignmentid}/run-program-status", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/run-program-status", method=GET)
 	public @ResponseBody List<Object> getRunningProgramStatus(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		User user = getUser(session);
@@ -212,7 +214,7 @@ public class StudentController extends BaseController {
 		return restTemplate.getForObject(endpoint,  List.class);
 	}
 	
-	@RequestMapping(value="/student/assignment/{assignmentid}/run-program-result", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/run-program-result", method=GET)
 	public @ResponseBody Map<String, Object> getRunningProgramResult(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -233,7 +235,7 @@ public class StudentController extends BaseController {
 		return map;
 	}
 	
-	@RequestMapping(value="/student/assignment/{assignmentid}/cancel-program", method=GET)
+	@RequestMapping(value= root + "/assignment/{assignmentid}/cancel-program", method=GET)
 	public @ResponseBody Map<String, String> cancelRunningProgram(Model model, HttpSession session,
 			@PathVariable long assignmentid) {
 		User user = getUser(session);

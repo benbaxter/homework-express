@@ -42,7 +42,7 @@
 		<span id="loadUserReason"></span>
 	</div>
 	<a href="#addUserModel" role="button" class="btn btn-info btn-small"
-		data-toggle="modal"> <i class="icon-plus"></i>Add Administrator
+		data-toggle="modal"> <i class="icon-plus"></i> Add Administrator
 	</a>
 	<table class="table table-hover table-bordered table-striped"
 		width="100%">
