@@ -42,7 +42,7 @@
 	<span id="loadUserReason"></span>
 </div>
 <a href="#addUserModel" role="button" class="btn btn-info btn-small"
-	data-toggle="modal"> <i class="icon-plus"></i>Add Instructor
+	data-toggle="modal"> <i class="icon-plus"></i> Add Instructor
 </a>
 <table class="table table-hover table-bordered table-striped"
 	width="100%">
