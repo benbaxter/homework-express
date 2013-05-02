@@ -11,7 +11,14 @@ public class ProgramResult implements Serializable {
 	String message;
 	String error;
 	Date date;
+	String compare;
 	
+	public String getCompare() {
+		return compare;
+	}
+	public void setCompare(String compare) {
+		this.compare = compare;
+	}
 	public String getResult() {
 		return result;
 	}

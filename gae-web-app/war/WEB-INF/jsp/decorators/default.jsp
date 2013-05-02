@@ -62,6 +62,34 @@
 	  //var hash = Base64.encode(tok);
 	  return "Basic " + tok;
 	}
+
+	function formatDateFromServer(serverTime) {
+		var d = new Date(parseInt(serverTime.substr(6)));
+		return formatDateObject(d);
+	}
+	
+	function formatDate(millis) {
+		var d = new Date(millis);
+	    return formatDateObject(d);
+	}
+	
+	function formatDateObject(d) {
+	    var date = d.getDate();
+	    var month = d.getMonth() + 1; //Months are zero based
+	    var year = d.getFullYear();
+	    var hour = d.getHours();
+	    if( hour > 12 ) {
+	    	hour -= 12;
+	    }
+	    if ( hour == 0 ) {
+	    	hour = 12;
+	    }
+	    var minute = d.getMinutes();
+	    var second = d.getSeconds();
+	    var pretty = month + "-" + date + "-" + year + " " + hour + ":" + minute + ":" + second;
+	    return pretty;
+	}
+	
 	//-->
 	</script>
 	<decorator:head/>

@@ -117,44 +117,68 @@ public class InstructorController extends BaseController {
 		return restTemplate.postForObject(endpoint, params, Map.class);
 	}
 	
-	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/submit", method=GET)
-	public String submitAssignment(Model model, HttpSession session,
-			@PathVariable long courseid, @PathVariable long assignmentid) { 
+	
+	@RequestMapping(value= root + "/course/add", method=POST)
+	public @ResponseBody Map<String, Object> addCourse(Model model, HttpSession session,
+			@RequestParam String name, @RequestParam String description) { 
 		
 		User user = getUser(session);
-		String endpoint = BASE_URL + "instructor/getassignment?userid=" + user.getUserId() + "&assignmentid=" + assignmentid; 
-		List<Object> list = restTemplate.getForObject(endpoint, List.class);
-		if( ! isEmpty(list) ) {
-			Map<String, String> s = (Map<String, String>) list.get(0);
-			if( RESPONSE_STATUS_SUCCESS.equalsIgnoreCase(s.get(RESPONSE_STATUS)) ) {
-				Assignment assignment = createAssignmentFromResponse((Map<String, Object>) list.get(1));
-				model.addAttribute("assignment", assignment);
-				model.addAttribute("user", getUser(session));
-				model.addAttribute("courseid", courseid);
-				model.addAttribute("navPage", "home");
-				model.addAttribute("submitUrl", BASE_URL + "instructor/addfiletoassignment");
-				model.addAttribute("callBackUrl", "http://localhost:8888/actions/instructor/course/" + courseid + "/assignment/" + assignmentid + "/submitted");
-				addMetaDataToModel(model, session);
-				return "instructor/submit-assignment";
-			} else {
-				return getCourse(model, session, courseid);
-			}
-		} else {
-			return getCourse(model, session, courseid);
-		}
+		String endpoint = BASE_URL + "instructor/addCourse"; 
+		Map<String, Object> params = new HashMap<>();
+		params.put("name", name);
+		params.put("description", description);
+		params.put("instructor.userId", user.getUserId());
+		return restTemplate.postForObject(endpoint, params, Map.class);
 	}
 	
-	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/submitted", method=GET)
-	public String submitAssignment(Model model, HttpSession session, 
-			@PathVariable long courseid, @PathVariable long assignmentid, 
-			@RequestParam(value=RESPONSE_STATUS) String status,
-			@RequestParam(value=RESPONSE_REASON) String reason) {
-		if( RESPONSE_STATUS_SUCCESS.equalsIgnoreCase(status) ) {
-		} else {
-			model.addAttribute("error", reason);
-		}
-		return submitAssignment(model, session, courseid, assignmentid);
+	@RequestMapping(value= root + "/course/{courseid}/delete", method=GET)
+	public @ResponseBody Map<String, String> deleteUser(@PathVariable long courseid, HttpSession session) {
+		Map<String, Long> params = new HashMap<String, Long>();
+		params.put("courseid", courseid);
+		String endpoint = BASE_URL + "instructor/removecourse";
+		return restTemplate.postForObject(endpoint, params, Map.class);
 	}
+	
+	@RequestMapping(value= root + "/course/{courseid}/student/{studentid}/delete", method=GET)
+	public @ResponseBody Map<String, String> removeStudentFromCourse(
+			@PathVariable long courseid,
+			@PathVariable long studentid,
+			HttpSession session) {
+		Map<String, Long> params = new HashMap<String, Long>();
+		params.put("courseid", courseid);
+		params.put("userid", studentid);
+		String endpoint = BASE_URL + "instructor/removeuserfromcourse";
+		return restTemplate.postForObject(endpoint, params, Map.class);
+	}
+	
+	@RequestMapping(value= root + "/course/{courseid}/assignment/add", method=POST)
+	public @ResponseBody Map<String, Object> addAssignment(
+			@PathVariable long courseid,
+			@RequestParam String name,
+			@RequestParam String description,
+			@RequestParam String dueDate,
+			@RequestParam String finalDate) { 
+		
+		String endpoint = BASE_URL + "instructor/addAssignment";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("courseId", courseid);
+		params.put("name", name);
+		params.put("description", description);
+		params.put("dueDate", dueDate);
+		params.put("finalSubmitDate", finalDate);
+		return restTemplate.postForObject(endpoint, params, Map.class);
+	}
+	
+	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/delete", method=GET)
+	public @ResponseBody Map<String, String> deleteAssignment(@PathVariable long courseid, 
+			@PathVariable long assignmentid) {
+		Map<String, Long> params = new HashMap<String, Long>();
+		params.put("courseId", courseid);
+		params.put("assignmentId", assignmentid);
+		String endpoint = BASE_URL + "instructor/removeassignment";
+		return restTemplate.postForObject(endpoint, params, Map.class);
+	}
+	
 	
 	@RequestMapping(value= root + "/assignment/{assignmentid}/compile-program", method=GET)
 	public @ResponseBody Map<String, Object> compileProgram(Model model, HttpSession session,

@@ -24,9 +24,8 @@ import edu.nku.csc640.project.web.model.UserRole;
 @SuppressWarnings("unchecked")
 public abstract class BaseController {
 	
-	protected static String BASE_URL = "http://csgcinlt151:5904/api/";
-	protected static String OUR_URL = "http://www.homework-express.appspot.com/";
-//	protected static final String BASE_URL = "http://www.csc640.com/api/";
+	protected static String BASE_URL;
+	protected static String OUR_URL;
 	protected static final String RESPONSE_STATUS = "Status";
 	protected static final String RESPONSE_REASON = "Reason";
 	protected static final String RESPONSE_STATUS_SUCCESS = "Success";
@@ -39,7 +38,7 @@ public abstract class BaseController {
 		if (SystemProperty.environment.value() ==
 			    SystemProperty.Environment.Value.Production) {
 			BASE_URL = "http://www.csc640.com/homeworkexpress/api/";
-			OUR_URL = "http://www.http://homework-express.appspot.com/";
+			OUR_URL = "http://www.homework-express.appspot.com/";
 		} else {
 			OUR_URL = "http://localhost:8888/";
 			BASE_URL = "http://csgcinlt151:5904/api/";
@@ -184,6 +183,7 @@ public abstract class BaseController {
 			result.setMessage((String) map.get("Message"));
 			result.setError((String) map.get("Error"));
 			result.setDate(convertDate((String) map.get("Date")));
+			result.setCompare((String) map.get("HtmlCompare"));
 			return result;
 		} else {
 			return null;
