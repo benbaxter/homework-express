@@ -122,41 +122,18 @@
 		}
 	}
 	
-	function formatDate(millis) {
-		var d = new Date(millis);
-	    var date = d.getDate();
-	    var month = d.getMonth() + 1; //Months are zero based
-	    var year = d.getFullYear();
-	    var hour = d.getHours();
-	    if( hour > 12 ) {
-	    	hour -= 12;
-	    }
-	    if ( hour == 0 ) {
-	    	hour = 12;
-	    }
-	    var minute = d.getMinutes();
-	    var second = d.getSeconds();
-	    var pretty = month + "-" + date + "-" + year + " " + hour + ":" + minute + ":" + second;
-	    return pretty;
-	}
-	
 	//-->
 	</script>
 
 	<script type="text/template" id="result-template">
 	<tr>
-		<th>Result</th>
-		<td>\${result}</td>
-		<th>Error</th>
-		<td class="control-group error"><span class="control-label">\${error}</span></td>
-	</tr>
-	<tr>
-		<th>Message</th>
-		<td>\${message}</td>
-		<th>Date Last Ran</th>
-		<td>\${date}</td>
-	</tr>
-  </script>
+	<td>Status: \${message}
+	<br />
+	Date Last Ran: 
+	\${date}
+	</td>
+	</tr>	
+   </script>
 	
 	<script type="text/template" id="processing-template">
 		<div class="progress progress-striped active">
@@ -187,40 +164,37 @@
 		</c:if>
 			<div class="assignment-result" id="results-section" style="display: ${displayResults}">
 				<c:set var="compileResult" value="${assignment.compileResult}" />
+				Compile Results
 				<table class="table table-bordered">
-					<caption>Compile Results</caption>
 					<tbody id="compileResultData">
 						<tr>
-							<th>Result</th>
-							<td>${compileResult.result}</td>
-							<th>Error</th>
-							<td class="control-group error"><span class="control-label">${compileResult.error}</span></td>
-						</tr>
-						<tr>
-							<th>Message</th>
-							<td>${compileResult.message}</td>
-							<th>Date Last Ran</th>
-							<td><fmt:formatDate value="${compileResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" /></td>
+							<td>Status: ${compileResult.message}
+							<br />
+							Date Last Ran: 
+							<fmt:formatDate value="${compileResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" />
+							</td>
 						</tr>
 					</tbody>
 				</table>
+				Test Results
 				<table class="table table-bordered">
-					<caption>Test Results</caption>
 					<tbody id="testResultData">
+					<c:set var="counter" value="0" />
 						<c:forEach var="testResult" items="${assignment.testResults}">
-							<tr>
-								<th>Result</th>
-								<td>${testResult.result}</td>
-								<th>Error</th>
-								<td class="control-group error"><span class="control-label">${testResult.error}</span></td>
-							</tr>
-							<tr>
-								<th>Message</th>
-								<td>${testResult.message}</td>
-								<th>Date Last Ran</th>
-								<td><fmt:formatDate value="${testResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" /></td>
-							</tr>
+							<c:if test="${counter % 3 == 0}">
+								<tr>
+							</c:if>
+								<td>
+								${testResult.compare}
+								<br />
+								Date Last Ran: <fmt:formatDate value="${testResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" />
+								</td>
+							<c:if test="${counter % 3 == 2}">
+								</tr>
+							</c:if>
+							<c:set var="counter" value="${counter + 1}" />
 						</c:forEach>
+					</tr>
 					</tbody>
 				</table>
 			</div>
