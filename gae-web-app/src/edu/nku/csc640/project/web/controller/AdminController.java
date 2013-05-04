@@ -33,11 +33,13 @@ public class AdminController extends BaseController {
 	@Autowired
 	RestTemplate restTemplate;
 	
+	private static final String root = "/admin";
+	
 	public AdminController() {
 		super();
 	}
 	
-	@RequestMapping(value="/admin/home", method=GET)
+	@RequestMapping(value=root + "/home", method=GET)
 	public String goHome(Model model, HttpSession session) { 
 		
 		model.addAttribute("navPage", "home");
@@ -46,34 +48,20 @@ public class AdminController extends BaseController {
 		return "admin/home";
 	}
 	
-	@RequestMapping(value="/admin/courses/create", method=POST)
-	public @ResponseBody Map<String, String> createCourses(
-			@RequestParam String name,
-			@RequestParam String description,
-			@RequestParam String instructorName,
-			HttpSession session) throws Exception {
-
-
-//		String basicAuth = encodeBase64User(session);
-//		MultiValueMap<String, String> headers = new HttpHeaders();
-//		headers.set("Authorization", "Basic " + basicAuth);
-//		restTemplate.exchange(BASE_URL, HttpMethod.POST, new HttpEntity<String>(headers), Map.class);
+	@RequestMapping(value= root + "/courses/add", method=POST)
+	public @ResponseBody Map<String, Object> addCourse(Model model, HttpSession session,
+			@RequestParam String name, @RequestParam String description,
+			@RequestParam long instructorId) { 
 		
-		Course course = new Course();
-		course.setName(name);
-		course.setDescription(description);
-		User instructor = new User();
-		course.setInstructor(instructor);
-		
-		course.setStudents(new ArrayList<User>());
-		
-		
-		String endpoint = BASE_URL + "AddCourse";
-		Map<String, String> s = restTemplate.postForObject(endpoint, course, Map.class);
-		return s;
+		String endpoint = BASE_URL + "instructor/addCourse"; 
+		Map<String, Object> params = new HashMap<>();
+		params.put("name", name);
+		params.put("description", description);
+		params.put("instructor.userId", instructorId);
+		return restTemplate.postForObject(endpoint, params, Map.class);
 	}
 	
-	@RequestMapping(value="/admin/users/create", method=POST)
+	@RequestMapping(value=root + "/users/create", method=POST)
 	public @ResponseBody Map<String, String> createUser(HttpSession session, 
 			@RequestParam String username,
 			@RequestParam String password,
@@ -94,28 +82,28 @@ public class AdminController extends BaseController {
 	}
 	
 
-	@RequestMapping(value="/admin/instructors", method=GET)
+	@RequestMapping(value=root + "/instructors", method=GET)
 	public @ResponseBody List<Object> getAllInstructors(HttpSession session) throws Exception {
 		String endpoint = BASE_URL + "admin/getusers?role=Instructor";
 		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		return result;
 	}
 	
-	@RequestMapping(value="/admin/students", method=GET)
+	@RequestMapping(value=root + "/students", method=GET)
 	public @ResponseBody List<Object> getAllStudents(HttpSession session) throws Exception {
 		String endpoint = BASE_URL + "admin/getusers?role=Student";
 		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		return result;
 	}
 	
-	@RequestMapping(value="/admin/admins", method=GET)
+	@RequestMapping(value=root + "/admins", method=GET)
 	public @ResponseBody List<Object> getAllAdmins(HttpSession session) throws Exception {
 		String endpoint = BASE_URL + "admin/getusers?role=Admin";
 		List<Object> result = restTemplate.getForObject(endpoint, List.class);
 		return result;
 	}
 	
-	@RequestMapping(value="/admin/users/delete/{userId}", method=GET)
+	@RequestMapping(value=root + "/users/delete/{userId}", method=GET)
 	public @ResponseBody Map<String, String> deleteUser(@PathVariable long userId, HttpSession session) {
 		
 		if( userId == getUser(session).getUserId() ) {
@@ -132,69 +120,14 @@ public class AdminController extends BaseController {
 		}
 	}
 	
-	@RequestMapping(value="/admin/instructors/names", method=GET)
-	public @ResponseBody List<String> getAllInstructorsNames() {
-		List<String> users = new ArrayList<String>();
-		
-		String endpoint = BASE_URL + "GetUsers";
-		List<Object> result = restTemplate.getForObject(endpoint, List.class);
-		if( ! isEmpty(result) ) {
-			Map<String, String> status = (Map<String, String>) result.get(0);
-			
-			List<Map<String, String>> peeps = (List<Map<String, String>>) result.get(1);
-			for (Map<String, String> u : peeps) {
-				if( u.containsKey("Role") 
-						&& UserRole.Instructor == UserRole.getFromString(u.get("Role")) ) {
-					String name = u.get("FirstName") + " " + u.get("LastName");
-					users.add(name);
-				}
-			}
-		}
-		return users;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/admin/courses", method=GET, produces="application/json")
+	@RequestMapping(value= root + "/courses", method=GET, produces="application/json")
 	public @ResponseBody List<Course> getAllCourses() {
 		
-		List<Course> courses = new ArrayList<Course>();
-		
-		String endpoint = BASE_URL + "GetCourses";
-		List<Object> result = restTemplate.getForObject(endpoint, List.class);
-		if( ! isEmpty(result) ) {
-			Map<String, String> status = (Map<String, String>) result.get(0);
-			
-			List<Map<String, Object>> cs = (List<Map<String, Object>>) result.get(1);
-			for (Map<String, Object> c : cs) {
-				Course course = new Course();
-				course.setName((String)c.get("Name"));
-				course.setDescription((String)c.get("Description"));
-				
-				Map<String, String> i = (Map<String,String>)c.get("Instructor");
-				User instructor = new User();
-				course.setInstructor(instructor);
-				
-				List<User> students = new ArrayList<>();
-				List<Map<String,String>> ss = (List<Map<String,String>>) c.get("Users");
-				for (Map<String, String> s : ss) {
-					User student = new User();
-					student.setFirstName(s.get("FirstName"));
-					student.setLastName(s.get("LastName"));
-					student.setUsername(s.get("Username"));
-					student.setPassword(s.get("Password"));
-					student.setRole(UserRole.getFromString(s.get("Role")));
-					students.add(student);
-				}
-				course.setStudents(students);
-				
-				courses.add(course);
-			}
-		}
-		return courses;
+		String endpoint = BASE_URL + "admin/getCourses";
+		return restTemplate.getForObject(endpoint, List.class);
 	}
 	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/admin/ass/files", method=POST)
+	@RequestMapping(value=root + "/ass/files", method=POST)
 	public @ResponseBody List<Object> createAssignment(Assignment assignment, BindingResult result) {
 
 		Map<String, Object> endpointParams = new HashMap<String, Object>();

@@ -179,6 +179,25 @@ public class InstructorController extends BaseController {
 		return restTemplate.postForObject(endpoint, params, Map.class);
 	}
 	
+	@RequestMapping(value= root + "/courses/{courseid}/assignment/{assignmentid}", method=GET)
+	public String getAssignment(Model model, HttpSession session,
+			@PathVariable long courseid,
+			@PathVariable long assignmentid) {
+		model.addAttribute("courseid", courseid);
+		model.addAttribute("assignmentid", assignmentid);
+		model.addAttribute("navPage", "home");
+		model.addAttribute("user", getUser(session));
+		addMetaDataToModel(model, session);
+		return "instructor/assignment";
+	}
+	
+	@RequestMapping(value= root + "/assignment/{assignmentid}/view", method=GET)
+	public @ResponseBody List<Object> getAssignment(@PathVariable long assignmentid, HttpSession session) {
+		User user = getUser(session);
+		String endpoint = BASE_URL + "instructor/getassignment?&assignmentid="+assignmentid 
+				+ "&userid=" + user.getUserId();
+		return restTemplate.getForObject(endpoint, List.class);
+	}
 	
 	@RequestMapping(value= root + "/assignment/{assignmentid}/compile-program", method=GET)
 	public @ResponseBody Map<String, Object> compileProgram(Model model, HttpSession session,

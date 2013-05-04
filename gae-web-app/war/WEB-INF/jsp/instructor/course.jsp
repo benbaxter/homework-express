@@ -8,8 +8,16 @@
 			<span class="span4">${course.description}</span> 
 		</div>
 		<div class="text-right">
-			<a class="btn btn-inverse"
-				href="<c:url value="/actions/instructor/home" />">Go Back</a>
+		<c:choose>
+			<c:when test="${user.role == 'Instructor'}">
+				<a class="btn btn-inverse"
+					href="<c:url value="/actions/instructor/home" />">Go Back</a>
+			</c:when>
+			<c:when test="${user.role == 'Admin'}">
+				<a class="btn btn-inverse"
+					href="<c:url value="/actions/admin/home" />">Go Back</a>
+			</c:when>
+		</c:choose>
 		</div>
 		<div class="accordion" id="accordion2">
 		  <div class="accordion-group">
@@ -38,8 +46,16 @@
 		  </div>
 		</div>
 		<div class="text-right">
-			<a class="btn btn-inverse"
-				href="<c:url value="/actions/instructor/home" />">Go Back</a>
+		<c:choose>
+			<c:when test="${user.role == 'Instructor'}">
+				<a class="btn btn-inverse"
+					href="<c:url value="/actions/instructor/home" />">Go Back</a>
+			</c:when>
+			<c:when test="${user.role == 'Admin'}">
+				<a class="btn btn-inverse"
+					href="<c:url value="/actions/admin/home" />">Go Back</a>
+			</c:when>
+		</c:choose>
 		</div>
 		</p>
 	</div>

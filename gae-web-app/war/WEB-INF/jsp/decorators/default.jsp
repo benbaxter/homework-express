@@ -42,7 +42,7 @@
 	<script src="/js/jquery-1.9.1.min.js" type="text/javascript"></script>
 	<script src="/js/bootstrap.min.js" type="text/javascript"></script>
 	<script src="/js/jquery.tmpl.js" type="text/javascript"></script>
-	<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
+	<script src="/js/underscore-min.js"></script>
 	<script type="text/javascript">
 	<!--
 	function getCookie(c_name) {
@@ -74,8 +74,8 @@
 	}
 	
 	function formatDateObject(d) {
-	    var date = d.getDate();
-	    var month = d.getMonth() + 1; //Months are zero based
+	    var date = padLeftWithZero(d.getDate());
+	    var month = padLeftWithZero(d.getMonth() + 1); //Months are zero based
 	    var year = d.getFullYear();
 	    var hour = d.getHours();
 	    if( hour > 12 ) {
@@ -84,10 +84,17 @@
 	    if ( hour == 0 ) {
 	    	hour = 12;
 	    }
-	    var minute = d.getMinutes();
-	    var second = d.getSeconds();
+	    var minute = padLeftWithZero(d.getMinutes());
+	    var second = padLeftWithZero(d.getSeconds());
 	    var pretty = month + "-" + date + "-" + year + " " + hour + ":" + minute + ":" + second;
 	    return pretty;
+	}
+	
+	function padLeftWithZero(num) {
+		if( num < 10 ) {
+			return "0" + num;
+		}
+		return num;
 	}
 	
 	//-->

@@ -116,7 +116,7 @@
 			<label>Name</label> 
 				<input type="text" name="name" id="addCoursename" class="span3" placeholder="Type the course's name" />
 			<label>Description</label> 
-				<textarea cols="50" rows="8" name="description" id="addCoursename" class="span3" placeholder="Tell us a little about the course"></textarea>
+				<textarea cols="50" rows="8" name="description" id="addCourseDescription" class="span3" placeholder="Tell us a little about the course"></textarea>
 			 <br />
 		</form>
     </p>
