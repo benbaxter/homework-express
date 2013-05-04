@@ -4,6 +4,38 @@
 
 	<script type="text/javascript">
 	<!--
+	$(document).ready(function() {
+		loadAssignment();
+	});
+		
+	function loadAssignment() {
+		$.ajax({
+			url : "/actions/instructor/assignment/${assignmentid}/view",
+			success : function(data) {
+				if( data[0].Status == "Success" ) {
+					data[1].DueDate = formatDateFromServer(data[1].DueDate);
+					data[1].FinalSubmitDate = formatDateFromServer(data[1].FinalSubmitDate);
+					$("#assignment-meta-data-template").tmpl( data[1] ).appendTo( $("#assignment-meta-data").empty() );
+					$("#mainContentTitle").html(data[1].Name);
+					
+					$.each(data[1].Tests, function(index, value) {
+						var fileType = "";
+						if( data[1].Tests[index].InputFile.FileType == "InstructorTestInput" ) {
+							fileType = "Standard Input";
+						} else if (data[1].Tests[index].InputFile.FileType == "InstructorTestInputFile" ) {
+							fileType = "Input File";
+						}
+						data[1].Tests[index].InputFile.FileType = fileType;
+					});
+					$("#test-file-list-template").tmpl( data[1].Tests ).appendTo( $("#testFileList").empty() );
+				} else {
+					$("#loadAssignmentReason").html(data[0].Reason);
+					$("#loadAssignmentErrors").show();
+				}
+			}
+		});
+	}
+	
 	
 	var currentProcessRunning;
 	
@@ -121,25 +153,6 @@
 			});
 		}
 	}
-	
-	function formatDate(millis) {
-		var d = new Date(millis);
-	    var date = d.getDate();
-	    var month = d.getMonth() + 1; //Months are zero based
-	    var year = d.getFullYear();
-	    var hour = d.getHours();
-	    if( hour > 12 ) {
-	    	hour -= 12;
-	    }
-	    if ( hour == 0 ) {
-	    	hour = 12;
-	    }
-	    var minute = d.getMinutes();
-	    var second = d.getSeconds();
-	    var pretty = month + "-" + date + "-" + year + " " + hour + ":" + minute + ":" + second;
-	    return pretty;
-	}
-	
 	//-->
 	</script>
 
@@ -157,6 +170,32 @@
 		<td>\${date}</td>
 	</tr>
   </script>
+
+  <script type="text/template" id="assignment-meta-data-template">
+	<tr>
+		<td>\${Description}</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Due Date: \${DueDate}</td>
+		<td>Final Submit Date: \${FinalSubmitDate}</td>
+	</tr>
+  </script>
+	
+	<script type="text/template" id="test-file-list-template">
+	<tr>
+		<td>
+			<a href="/actions/instructor/courses/${courseid}/assignment/${assignmentid}/test/\${Id}"><i class="icon-pencil"></i></a>
+			<a href="javascript: deleteTest(\${Id})"><i class="icon-trash"></i></a>
+		</td>
+		<td>\${Name}</td>
+		<td>\${Description}</td>
+		<td>\${InputFile.FileName}</td>
+		<td>\${InputFile.FileType}</td>
+		<td>\${OutputFile.FileName}</td>
+	</tr>
+  </script>
+	
 	
 	<script type="text/template" id="processing-template">
 		<div class="progress progress-striped active">
@@ -168,103 +207,51 @@
 
 <body>
 	<div class="container-fluid maincontent">
-		<h2 id="mainContentTitle">${assignment.name}</h2>
-		<div class="controls controls-row" width="100%">
-			<span class="span4 text-left">${assignment.description}</span>
-			<div class="span4 text-right">
-				<span class="span4">Due Date: <fmt:formatDate
-						value="${assignment.dueDate}" type="both" pattern="MM-dd-yyyy" /></span>
-				<span class="span4">Final Submit Date: <fmt:formatDate
-						value="${assignment.finalSubmitDate}" type="both"
-						pattern="MM-dd-yyyy" /></span>
-			</div>
+		<h2 id="mainContentTitle"></h2>
+		<table class="table">
+			<tbody id="assignment-meta-data">
+				<tr><td></td></tr>
+			</tbody>
+		</table>
+		<div class="alert alert-error" id="loadAssignmentErrors"
+			style="display: none;">
+			<span id="loadAssignmentReason"></span>
 		</div>
-		<c:set var="displayResults" value="none" />
-		<c:if test="${not empty assignment.testResults}">
-			<c:if test="${not empty assignment.compileResult}">
-				<c:set var="displayResults" value="" />
-			</c:if>
-		</c:if>
-			<div class="assignment-result" id="results-section" style="display: ${displayResults}">
-				<c:set var="compileResult" value="${assignment.compileResult}" />
-				<table class="table table-bordered">
-					<caption>Compile Results</caption>
-					<tbody id="compileResultData">
-						<tr>
-							<th>Result</th>
-							<td>${compileResult.result}</td>
-							<th>Error</th>
-							<td class="control-group error"><span class="control-label">${compileResult.error}</span></td>
-						</tr>
-						<tr>
-							<th>Message</th>
-							<td>${compileResult.message}</td>
-							<th>Date Last Ran</th>
-							<td><fmt:formatDate value="${compileResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" /></td>
-						</tr>
-					</tbody>
-				</table>
-				<table class="table table-bordered">
-					<caption>Test Results</caption>
-					<tbody id="testResultData">
-						<c:forEach var="testResult" items="${assignment.testResults}">
-							<tr>
-								<th>Result</th>
-								<td>${testResult.result}</td>
-								<th>Error</th>
-								<td class="control-group error"><span class="control-label">${testResult.error}</span></td>
-							</tr>
-							<tr>
-								<th>Message</th>
-								<td>${testResult.message}</td>
-								<th>Date Last Ran</th>
-								<td><fmt:formatDate value="${testResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" /></td>
-							</tr>
-						</c:forEach>
-					</tbody>
-				</table>
-			</div>
+		
+		<div class="text-right">
+			<a class="btn btn-inverse"
+				href="<c:url value="/actions/instructor/courses/${courseid}" />">Go Back</a>
+		</div>
+		Test Files
 		<table class="table table-hover table-bordered table-striped"
 			width="100%">
 			<thead>
 				<tr>
-					<th>Main</th>
-					<th>File</th>
-					<th>Date Submitted</th>
+					<th>Actions</th>
+					<th>Name</th>
+					<th>Description</th>
+					<th>Input File</th>
+					<th>Type</th>
+					<th>Output File</th>
 				</tr>
 			</thead>
-			<tbody id="fileList">
-				<c:choose>
-					<c:when test="${not empty assignment.files}">
-						<c:forEach var="file" items="${assignment.files}">
-							<tr>
-								<td><c:if test="${file.fileType == 'StudentCodeMain'}">
-										<i class="icon-ok"></i>
-									</c:if></td>
-								<td><c:out value="${file.name}" /></td>
-								<td><fmt:formatDate value="${file.dateSubmitted}"
-										type="both" pattern="MM-dd-yyyy" /></td>
-							</tr>
-						</c:forEach>
-					</c:when>
-					<c:otherwise>
-						<tr>
-							<td>You have not submitted any files yet.</td>
-						</tr>
-					</c:otherwise>
-				</c:choose>
+			<tbody id="testFileList">
+				<tr>
+					<td>You have not uploaded any test files yet.</td>
+				</tr>
 			</tbody>
 		</table>
 		<div class="text-right">
-			<a class="btn btn-inverse"
-				href="<c:url value="/actions/student/courses/${courseid}" />">Cancel</a>
-			<c:if test="${not empty assignment.files}">
-				<a class="btn btn-success" href="javascript: compileProgram();">Compile</a>
-				<a class="btn btn-success" href="javascript: testProgram();">Test</a>
-			</c:if>
 			<a class="btn btn-primary"
-				href="<c:url value="/actions/student/course/${courseid}/assignment/${assignment.id}/submit" />">Submit</a>
+				href="<c:url value="/actions/student/course/${courseid}/assignment/${assignmentid}/uploadTestFile" />">Upload Tests</a>
 		</div>
+		<br /><br />
+		
+		<div class="text-right">
+			<a class="btn btn-inverse"
+				href="<c:url value="/actions/instructor/courses/${courseid}" />">Go Back</a>
+		</div>
+		
 	</div>
 	
 <div id="waitingModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

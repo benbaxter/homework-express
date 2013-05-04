@@ -107,7 +107,7 @@ function deleteAssignment(id) {
 <script type="text/template" id="assignment-template">
 <tr>
 <td>
-<a href="/actions/instructor/assigment/\${Id}/edit"><i class="icon-pencil"></i></a>
+<a href="/actions/instructor/courses/${course.id}/assignment/\${Id}"><i class="icon-pencil"></i></a>
 <a href="javascript: deleteAssignment(\${Id})"><i class="icon-trash"></i></a>
 </td>
 <td>\${Name}</td>
@@ -146,7 +146,7 @@ function deleteAssignment(id) {
 							<c:forEach var="ass" items="${course.assignments}">
 								<tr>
 									<td>
-									<a href="/actions/instructor/assigment/${ass.id}/edit"><i class="icon-pencil"></i></a>
+									<a href="/actions/instructor/courses/${course.id}/assignment/${ass.id}"><i class="icon-pencil"></i></a>
 									<a href="javascript: deleteAssignment(${ass.id})"><i class="icon-trash"></i></a>
 									</td>
 									<td>${ass.name}</td>

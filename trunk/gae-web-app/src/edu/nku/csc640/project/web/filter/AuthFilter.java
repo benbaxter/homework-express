@@ -46,7 +46,8 @@ public class AuthFilter implements Filter {
 	
 		if( user != null ) {
 			if( user.getRole() == Admin
-					&& url.startsWith("/actions/admin") ) {
+					&& (url.startsWith("/actions/admin")
+					|| url.startsWith("/actions/instructor")) ) {
 				chain.doFilter(request, response);
 			} else if( user.getRole() == Instructor
 						&& url.startsWith("/actions/instructor") ) {
