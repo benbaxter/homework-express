@@ -26,9 +26,6 @@
 					$("#addUserReason").html(data.Reason);
 					$("#createUserErrors").show();
 				}
-			},
-			error : function(data) {
-				
 			}
 		});
 	}

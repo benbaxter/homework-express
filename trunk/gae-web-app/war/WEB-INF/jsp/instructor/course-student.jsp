@@ -124,8 +124,8 @@ function dropStudentFromClass(id) {
 							<i class="icon-plus"></i> Add Student
 						</a>
 					</div>
-					<div class="alert alert-error" id="addStudentErrors" style="display:none;">
-			    		<span id="addStudentReason"></span>
+					<div class="alert alert-error" id="loadStudentErrors" style="display:none;">
+			    		<span id="loadStudentReason"></span>
 			    	</div>
 			        <table class="table table-hover table-bordered table-striped"
 							width="100%">

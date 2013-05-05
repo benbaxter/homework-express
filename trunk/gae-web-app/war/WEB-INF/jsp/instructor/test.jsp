@@ -67,7 +67,7 @@
 				type="hidden" name="containsMain" id="containsMain" />
 
 			<div id="fileInputs"></div>
-
+			<input type="date" />
 			<br /> <a class="btn"
 				href="<c:url value="/actions/student/course/${courseid}/assignment/${assignment.id}" />">Cancel</a>
 			<a class="btn btn-inverse" href="javascript: addAnotherFile()">Add

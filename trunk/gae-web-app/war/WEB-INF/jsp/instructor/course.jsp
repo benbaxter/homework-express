@@ -7,7 +7,7 @@
 		<div class="controls controls-row">
 			<span class="span4">${course.description}</span> 
 		</div>
-		<div class="text-right">
+		<div class="text-right" style="margin-bottom: 10px;">
 		<c:choose>
 			<c:when test="${user.role == 'Instructor'}">
 				<a class="btn btn-inverse"
