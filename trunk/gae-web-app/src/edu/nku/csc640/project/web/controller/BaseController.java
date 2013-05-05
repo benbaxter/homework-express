@@ -41,7 +41,7 @@ public abstract class BaseController {
 			OUR_URL = "http://www.homework-express.appspot.com/";
 		} else {
 			OUR_URL = "http://localhost:8888/";
-			BASE_URL = "http://csgcinlt151:5904/api/";
+			BASE_URL = "http://192.168.1.100:5904/api/";
 		}
 	}
 	

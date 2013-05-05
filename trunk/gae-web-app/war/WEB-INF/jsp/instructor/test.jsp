@@ -3,57 +3,67 @@
 <head>
 	<script type="text/javascript">
 	<!--
+	
 	$(document).ready(function() {
-		addAnotherFile();
+		loadAssignment();
 	});
 		
-	function addAnotherFile() {
-		$("#file-input-template").tmpl().appendTo( $("#fileInputs") );
+	var students;
+	function loadAssignment() {
+		$.ajax({
+			url : "/actions/instructor/assignment/${assignmentid}/view",
+			success : function(data) {
+				if( data[0].Status == "Success" ) {
+					$("#mainContentTitle").html(data[1].Name);
+					$("#assignmentDescription").html(data[1].Description);
+					$("#assignmentDescription").html(data[1].Description);
+					$("#assignmentDueDate").html("Due Date: " + formatDateFromServerMMddyy(data[1].DueDate));
+					$("#assignmentFinalSubmitDate").html("Final Submt Date: " + formatDateFromServerMMddyy(data[1].FinalSubmitDate));
+				} else {
+					$("#loadAssignmentReason").html(data[0].Reason);
+					$("#loadAssignmentErrors").show();
+				}
+			}
+		});
 	}
 	
 	function prepareData() {
 		
-		$.each($("[name=files]"), function(index, value) {
+		$.each($("[name=outputFile]"), function(index, value) {
 			if( value == "" ) {
 				return false;
 			}
 		});
 		
-		$.each($("[name=isMain]"), function(index, value) {
-			if( value.checked ) {
-				var fileName = $("[name=files]")[index].value.replace(/^.*[\\\/]/, '');
-				$("#containsMain").val(fileName);
-			}
-		});
+//		$.each($("[name=isMain]"), function(index, value) {
+//			if( value.checked ) {
+//			var fileName = $("[name=files]")[index].value.replace(/^.*[\\\/]/, '');
+//				$("#containsMain").val(fileName);
+//			}
+//		});
 	}
 	
 	//-->
 	</script>
 	
-	<script type="text/template" id="file-input-template">
-		<label class="radio">
-			<input type="radio" name="isMain" />
-			Contains Main
-			<input name="files" type="file" />
-		</label>			
-  </script>
 </head>
 
 <body>
 	<div class="container-fluid maincontent">
-		<h2 id="mainContentTitle">${assignment.name}</h2>
+		<h2 id="mainContentTitle"></h2>
 		<p>
 		<div class="controls controls-row" width="100%">
-			<span class="span4 text-left">${assignment.description}</span>
+			<span class="span4 text-left" id="assignmentDescription"></span>
 			<div class="span4 text-right">
-				<span class="span4">Due Date: <fmt:formatDate
-						value="${assignment.dueDate}" type="both" pattern="MM-dd-yyyy" /></span>
-				<span class="span4">Final Submit Date: <fmt:formatDate
-						value="${assignment.finalSubmitDate}" type="both"
-						pattern="MM-dd-yyyy" /></span>
+				<span class="span4" id="assignmentDueDate"></span>
+				<span class="span4" id="assignmentFinalSubmitDate"></span>
 			</div>
 		</div>
-		<form method="post" name="submitAssignmentForm"
+		<div class="alert alert-error" id="loadAssignmentErrors"
+			style="display: none;">
+			<span id="loadAssignmentReason"></span>
+		</div>
+		<form method="post" name="submitTestForm" class="form-horizontal"
 			enctype="multipart/form-data" action="${submitUrl}"
 			onsubmit="prepareData();">
 			<p class="text-error">
@@ -61,18 +71,50 @@
 					<c:out value="${error}" />
 				</c:if>
 			</p>
-			<input name="callbackurl" type="hidden" value="${callBackUrl}" /> <input
-				type="hidden" name="userid" value="${user.userId}" /> <input
-				type="hidden" name="assignmentid" value="${assignment.id}" /> <input
-				type="hidden" name="containsMain" id="containsMain" />
-
-			<div id="fileInputs"></div>
-			<input type="date" />
-			<br /> <a class="btn"
-				href="<c:url value="/actions/student/course/${courseid}/assignment/${assignment.id}" />">Cancel</a>
-			<a class="btn btn-inverse" href="javascript: addAnotherFile()">Add
-				Another File</a>
-			<button class="btn btn-primary">Submit</button>
+			<input name="callbackurl" type="hidden" value="${callbackUrl}" /> 
+			<input type="hidden" name="courseid" value="${courseid}" />
+			<input type="hidden" name="userid" value="${user.userId}" />  
+			<input type="hidden" name="assignmentid" value="${assignmentid}" /> 
+			<div class="control-group">
+				<label class="control-label" for="name">Name</label>
+			    <div class="controls">
+					<input type="text" name="name" placeholder="Name" /> 
+			    </div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="description">Description</label>
+			    <div class="controls">
+					<textarea cols="30" rows="3" name="description" placeholder="Describe the test case."></textarea>
+			    </div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="files">Output File</label>
+			    <div class="controls">
+					<input name="files" type="file" placeholder="Choose an output file" />
+			    </div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="files">Input File</label>
+			    <div class="controls">
+					<input name="files" type="file" placeholder="Choose an input file" />
+			    </div>
+			</div>
+			<div class="control-group">
+				<label class="control-label" for="inputType">Input File Type</label>
+			    <div class="controls">
+					<select name="inputType">
+						<option value="">Select the type for the input</option>
+						<option value="InstructorTestInput">Standard Input</option>
+						<option value="InstructorTestInputFile">Input File</option>
+					</select>
+			    </div>
+			</div>
+			<div class="control-group">
+				<div class="controls">
+			    	<a class="btn" href="<c:url value="/actions/instructor/courses/${courseid}/assignment/${assignmentid}" />">Cancel</a>
+					<button class="btn btn-primary">Submit</button>
+			    </div>
+			</div>
 		</form>
 		</p>
 	</div>

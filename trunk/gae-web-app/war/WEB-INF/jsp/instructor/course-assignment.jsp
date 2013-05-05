@@ -182,9 +182,9 @@ function deleteAssignment(id) {
 			<label>Description</label> 
 				<textarea cols="50" rows="2" name="description" class="span3" placeholder="Tell us a little about the assignment"></textarea>
 			<label>Due Date (mm/dd/yyyy)</label> 
-				<input type="text" name="dueDate" class="span3" placeholder="Type the assignment's due date" />	
+				<input type="date" name="dueDate" class="span3" placeholder="Type the assignment's due date" />	
 			<label>Final Due Date (mm/dd/yyyy)</label> 
-				<input type="text" name="finalDate" class="span3" placeholder="Type the assignment's final due date" />	
+				<input type="date" name="finalDate" class="span3" placeholder="Type the assignment's final due date" />	
 			 <br />
 		</form>
     </p>
