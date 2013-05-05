@@ -98,6 +98,15 @@ public class StudentController extends BaseController {
 		}
 	}
 	
+	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}.json", method=GET)
+	public @ResponseBody List<Object> getAssignment(HttpSession session,
+			@PathVariable long courseid, @PathVariable long assignmentid) { 
+		
+		User user = getUser(session);
+		String endpoint = BASE_URL + "student/getassignment?userid=" + user.getUserId() + "&assignmentid=" + assignmentid; 
+		return restTemplate.getForObject(endpoint, List.class);
+	}
+	
 	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/submit", method=GET)
 	public String submitAssignment(Model model, HttpSession session,
 			@PathVariable long courseid, @PathVariable long assignmentid) { 

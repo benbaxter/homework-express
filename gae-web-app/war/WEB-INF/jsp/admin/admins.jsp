@@ -14,15 +14,11 @@
 	function loadAdmins() {
 		$.ajax({
 			url : "/actions/admin/admins",
-				
-			beforeSend: function (xhr) { 
-				//xhr.setRequestHeader ("Authorization", make_base_auth(getCookie("username"), getCookie("password")));
-				xhr.setRequestHeader ("Authorization", "Basic ${basicauthorization}");
-				xhr.setRequestHeader ("username", getCookie("username"));
-			},
 			success : function(data) {
 				if( data[0].Status == "Success" ) {
-					$("#user-template").tmpl( data[1] ).appendTo( $("#adminList").empty() );
+					if( data[1].length > 0 ) {
+						$("#user-template").tmpl( data[1] ).appendTo( $("#adminList").empty() );
+					}
 				} else {
 					$("#loadUserReason").html(data[0].Reason);
 					$("#loadUserErrors").show();
@@ -54,7 +50,7 @@
 		</thead>
 		<tbody id="adminList">
 			<tr>
-				<td>Could not load administrators</td>
+				<td>There are no administrators</td>
 			</tr>
 		</tbody>
 	</table>

@@ -42,6 +42,7 @@ public abstract class BaseController {
 		} else {
 			OUR_URL = "http://localhost:8888/";
 			BASE_URL = "http://192.168.1.100:5904/api/";
+			BASE_URL = "http://www.csc640.com/homeworkexpress/api/";
 		}
 	}
 	

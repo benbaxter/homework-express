@@ -14,15 +14,11 @@
 	function loadStudents() {
 		$.ajax({
 			url : "/actions/admin/students",
-				
-			beforeSend: function (xhr) { 
-				//xhr.setRequestHeader ("Authorization", make_base_auth(getCookie("username"), getCookie("password")));
-				xhr.setRequestHeader ("Authorization", "Basic ${basicauthorization}");
-				xhr.setRequestHeader ("username", getCookie("username"));
-			},
 			success : function(data) {
 				if( data[0].Status == "Success" ) {
-					$("#user-template").tmpl( data[1] ).appendTo( $("#studentList").empty() );
+					if( data[1].length > 0 ) {
+						$("#user-template").tmpl( data[1] ).appendTo( $("#studentList").empty() );
+					}
 				} else {
 					$("#loadUserReason").html(data[0].Reason);
 					$("#loadUserErrors").show();
@@ -54,7 +50,7 @@
 	</thead>
 	<tbody id="studentList">
 		<tr>
-			<td>Could not load students</td>
+			<td>There are no students</td>
 		</tr>
 	</tbody>
 </table>

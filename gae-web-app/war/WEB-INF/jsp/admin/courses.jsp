@@ -13,7 +13,9 @@
 			url : "/actions/admin/courses",
 			success : function(data) {
 				if( data[0].Status == "Success" ) {
-					$("#course-template").tmpl( data[1] ).appendTo( $("#courseList").empty() );
+					if( data[1].length > 0 ) {
+						$("#course-template").tmpl( data[1] ).appendTo( $("#courseList").empty() );
+					}
 				} else {
 					$("#loadCourseReason").html(data[0].Reason);
 					$("#loadCourseErrors").show();
@@ -129,7 +131,7 @@
 			</tr>
 		</thead>
 		<tbody id="courseList">
-			<tr><td>Could not load courses</td></tr>
+			<tr><td>There are no courses</td></tr>
 		</tbody>
 	</table>
 	</p>
