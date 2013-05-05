@@ -12,7 +12,9 @@
 			url : "/actions/student/${user.userId}/courses",
 			success : function(data) {
 				if( data[0].Status == "Success" ) {
-					$("#course-template").tmpl( data[1] ).appendTo( $("#courseList").empty() );
+					if( data[1].length > 0 ) {
+						$("#course-template").tmpl( data[1] ).appendTo( $("#courseList").empty() );
+					}
 				} else {
 					$("#loadUserReason").html(data[0].Reason);
 					$("#loadUserErrors").show();
@@ -49,7 +51,7 @@
 			</thead>
 			<tbody id="courseList">
 				<tr>
-					<td>Could not load courses</td>
+					<td colspan="3">You do not have any courses</td>
 				</tr>
 			</tbody>
 		</table>

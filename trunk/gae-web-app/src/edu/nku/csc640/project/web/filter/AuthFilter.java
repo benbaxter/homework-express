@@ -8,6 +8,7 @@ import static org.springframework.util.StringUtils.hasText;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -24,6 +25,8 @@ import edu.nku.csc640.project.web.model.UserRole;
 
 public class AuthFilter implements Filter {
 
+	private static final Logger log = Logger.getLogger(AuthFilter.class.getName());
+	
 	//Currently need to whitelist the login url path to advoid the filter 
 	private static final Set<String> whiteListSpringUrlsToNotFilter;
 	static {
@@ -31,7 +34,7 @@ public class AuthFilter implements Filter {
 		whiteListSpringUrlsToNotFilter.add("/actions/login");
 		whiteListSpringUrlsToNotFilter.add("/actions/logout");
 //		whiteListSpringUrlsToNotFilter.add("/actions/profile");
-		whiteListSpringUrlsToNotFilter.add("/actions/you-suck");
+		whiteListSpringUrlsToNotFilter.add("/actions/no-auth");
 		whiteListSpringUrlsToNotFilter.add("/actions/something-bad-happened");
 	}
 	
@@ -43,7 +46,8 @@ public class AuthFilter implements Filter {
 		String url = httpRequest.getRequestURI();
 		HttpSession session = httpRequest.getSession();
 		User user = (User) session.getAttribute("user");
-	
+        log.info("user: " + user);
+        log.info("url: " + url);
 		if( user != null ) {
 			if( user.getRole() == Admin
 					&& (url.startsWith("/actions/admin")
@@ -58,7 +62,7 @@ public class AuthFilter implements Filter {
 			} else if(url.startsWith("/actions/profile")) {
 				chain.doFilter(request, response);
 			} else {
-				handleRedirect("/actions/you-suck", url, request, response, chain);
+				handleRedirect("/actions/no-auth", url, request, response, chain);
 			}
 		} else {
 			handleRedirect("/actions/login", url, request, response, chain);

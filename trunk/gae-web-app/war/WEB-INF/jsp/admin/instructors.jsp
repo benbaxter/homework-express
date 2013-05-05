@@ -14,15 +14,11 @@
 	function loadInstructors() {
 		$.ajax({
 			url : "/actions/admin/instructors",
-				
-			beforeSend: function (xhr) { 
-				//xhr.setRequestHeader ("Authorization", make_base_auth(getCookie("username"), getCookie("password")));
-				xhr.setRequestHeader ("Authorization", "Basic ${basicauthorization}");
-				xhr.setRequestHeader ("username", getCookie("username"));
-			},
 			success : function(data) {
 				if( data[0].Status == "Success" ) {
-					$("#user-template").tmpl( data[1] ).appendTo( $("#instructorList").empty() );
+					if( data[1].length > 0 ) {
+						$("#user-template").tmpl( data[1] ).appendTo( $("#instructorList").empty() );
+					}
 				} else {
 					$("#loadUserReason").html(data[0].Reason);
 					$("#loadUserErrors").show();
@@ -54,7 +50,7 @@
 	</thead>
 	<tbody id="instructorList">
 		<tr>
-			<td>Could not load instructors</td>
+			<td>There are no instructors</td>
 		</tr>
 	</tbody>
 </table>

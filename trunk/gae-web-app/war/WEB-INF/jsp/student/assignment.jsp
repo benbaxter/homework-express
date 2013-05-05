@@ -1,9 +1,36 @@
 <%@ include file="/WEB-INF/jsp/common/taglibs.jsp"%>
 
 <head>
-
+	<link rel="stylesheet" type="text/css" href="/css/Diff.css" />
 	<script type="text/javascript">
 	<!--
+	$(document).ready(function() {
+		loadAssignment();
+	});
+		
+	var tests;
+	function loadAssignment() {
+		$.ajax({
+			url : "/actions/student/course/${courseid}/assignment/${assignmentid}.json",
+			success : function(data) {
+				if( data[0].Status == "Success" ) {
+					if( data[1].TestResults.length > 0 ) {
+						$.each(data[1].TestResults, function(index, value) {
+							data[1].TestResults[index].Date = formatDateFromServerMMddyy(value.Date);
+							data[1].TestResults[index].index = index;
+						});
+						$("#result-template").tmpl( data[1].TestResults ).appendTo( $("#testResultData").empty() );
+						tests = data[1].TestResults;
+					} else {
+						$("#testResultData").html("There are no results until something is run.")
+					}
+				} else {
+					$("#loadAssignmentReason").html(data[0].Reason);
+					$("#loadAssignmentErrors").show();
+				}
+			}
+		});
+	}
 	
 	var currentProcessRunning;
 	
@@ -51,7 +78,7 @@
 			success : function(data) {
 				if( data.result ) {
 					data.result.date = formatDate(data.result.date);
-				    $("#result-template").tmpl( data.result ).appendTo( $("#compileResultData").empty() );
+				    //$("#result-template").tmpl( data.result ).appendTo( $("#compileResultData").empty() );
 				}
 			}
 		});
@@ -95,8 +122,10 @@
 				if( data.results ) {
 					$.each(data.results, function(index, value) {
 						data.results[index].date = formatDate(value.date); 
+						data.results[index].index = index;
 					});
-				    $("#result-template").tmpl( data.results ).appendTo( $("#testResultData").empty() );
+					$("#result-2-template").tmpl( data.results ).appendTo( $("#testResultData").empty() );
+					tests = data.results;
 				}
 			}
 		});
@@ -120,19 +149,53 @@
 		}
 	}
 	
+	function openCompare(index) {
+		$.each(tests, function(i, value) {
+			if( value.index == index ) {
+				$("#compare-body").html(value.HtmlCompare);
+			}
+		});
+		$("#compareModel").modal('show');
+	}
+	
+	function openCompare2(index) {
+		$.each(tests, function(i, value) {
+			if( value.index == index ) {
+				$("#compare-body").html(value.compare);
+			}
+		});
+		$("#compareModel").modal('show');
+	}
+	
 	//-->
 	</script>
 
 	<script type="text/template" id="result-template">
 	<tr>
-	<td>Status: \${message}
-	<br />
-	Date Last Ran: 
-	\${date}
-	</td>
-	</tr>	
+		<td>\${index}</td>
+		<td>\${Message}</td>
+		<td><a href="javascript: openCompare(\${index});">View Compare</a></td>
+	</tr>
+   </script>
+
+	<script type="text/template" id="result-2-template">
+	<tr>
+		<td>\${index}</td>
+		<td>\${message}</td>
+		<td><a href="javascript: openCompare2(\${index});">View Compare</a></td>
+	</tr>
    </script>
 	
+<%--
+	<script type="text/template" id="result-template">
+	<div>
+		    <span class="pull-right" id="compare\${index}">
+				\${HtmlCompare}
+		    </span>
+		</div>
+	<br />
+   </script>
+ --%>	
 	<script type="text/template" id="processing-template">
 		<div class="progress progress-striped active">
 		  <div class="bar" style="width: 100%;"></div>
@@ -154,48 +217,10 @@
 						pattern="MM-dd-yyyy" /></span>
 			</div>
 		</div>
-		<c:set var="displayResults" value="none" />
-		<c:if test="${not empty assignment.testResults}">
-			<c:if test="${not empty assignment.compileResult}">
-				<c:set var="displayResults" value="" />
-			</c:if>
-		</c:if>
-			<div class="assignment-result" id="results-section" style="display: ${displayResults}">
-				<c:set var="compileResult" value="${assignment.compileResult}" />
-				Compile Results
-				<table class="table table-bordered">
-					<tbody id="compileResultData">
-						<tr>
-							<td>Status: ${compileResult.message}
-							<br />
-							Date Last Ran: 
-							<fmt:formatDate value="${compileResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" />
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				Test Results
-				<table class="table table-bordered">
-					<tbody id="testResultData">
-					<c:set var="counter" value="0" />
-						<c:forEach var="testResult" items="${assignment.testResults}">
-							<c:if test="${counter % 3 == 0}">
-								<tr>
-							</c:if>
-								<td>
-								${testResult.compare}
-								<br />
-								Date Last Ran: <fmt:formatDate value="${testResult.date}" type="both" pattern="MM-dd-yyyy hh:mm:ss" />
-								</td>
-							<c:if test="${counter % 3 == 2}">
-								</tr>
-							</c:if>
-							<c:set var="counter" value="${counter + 1}" />
-						</c:forEach>
-					</tr>
-					</tbody>
-				</table>
-			</div>
+		<div class="alert alert-error" id="loadAssignmentErrors"
+			style="display: none;">
+			<span id="loadAssignmentReason"></span>
+		</div>
 		<table class="table table-hover table-bordered table-striped"
 			width="100%">
 			<thead>
@@ -233,6 +258,7 @@
 			<c:if test="${not empty assignment.files}">
 				<a class="btn btn-success" href="javascript: compileProgram();">Compile</a>
 				<a class="btn btn-success" href="javascript: testProgram();">Test</a>
+				<a class="btn btn-info" href="#resultsModel" data-toggle="modal">View Results</a>
 			</c:if>
 			<a class="btn btn-primary"
 				href="<c:url value="/actions/student/course/${courseid}/assignment/${assignment.id}/submit" />">Submit</a>
@@ -254,4 +280,44 @@
     <button class="btn btn-inverse" data-dismiss="modal" aria-hidden="true">Close</button>
   </div>
 </div>
+
+<div id="resultsModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Results</h3>
+  </div>
+  <div class="modal-body">
+  	<div id="result-body">
+	   <table class="table table-hover table-bordered table-striped" width="100%">
+			<thead>
+				<tr>
+					<th>Test</th>
+					<th>Result</th>
+					<th>&nbsp;</th>
+				</tr>
+			</thead>
+			<tbody id="testResultData">
+		</tbody>
+		</table>
+	</div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-inverse" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
+<div id="compareModel" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Compare</h3>
+  </div>
+  <div class="modal-body">
+  	<div id="compare-body">
+	</div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-inverse" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
 </body>

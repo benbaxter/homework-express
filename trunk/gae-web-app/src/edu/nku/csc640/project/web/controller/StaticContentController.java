@@ -16,7 +16,7 @@ public class StaticContentController extends BaseController {
 		super();
 	}
 	
-	@RequestMapping(value= {"/you-suck"}, method={GET, POST})
+	@RequestMapping(value= {"/no-auth"}, method={GET, POST})
 	public String unauthed(Model model, HttpSession session) { 
 		
 		addMetaDataToModel(model, session);
