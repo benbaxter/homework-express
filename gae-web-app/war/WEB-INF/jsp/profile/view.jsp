@@ -2,7 +2,7 @@
 
 <div class="container">
 	<!-- Main hero unit for a primary marketing message or call to action -->
-	<div class="hero-unit clearfix">
+	<div class="maincontent clearfix">
 		<div class="pull-left span5">
 			<h2>Your account in Homework Express has been updated</h2>
 		</div>

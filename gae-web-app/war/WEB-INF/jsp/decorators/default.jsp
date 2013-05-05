@@ -68,15 +68,18 @@
 		return formatDateObject(d);
 	}
 	
+
+	function formatDateFromServeryyyyMMdd(serverTime) {
+		var d = new Date(parseInt(serverTime.substr(6)));
+		return formatDateObjectyyyyMMdd(d);
+	}
+
 	function formatDate(millis) {
 		var d = new Date(millis);
 	    return formatDateObject(d);
 	}
 	
 	function formatDateObject(d) {
-	    var date = padLeftWithZero(d.getDate());
-	    var month = padLeftWithZero(d.getMonth() + 1); //Months are zero based
-	    var year = d.getFullYear();
 	    var hour = d.getHours();
 	    if( hour > 12 ) {
 	    	hour -= 12;
@@ -86,7 +89,23 @@
 	    }
 	    var minute = padLeftWithZero(d.getMinutes());
 	    var second = padLeftWithZero(d.getSeconds());
-	    var pretty = month + "-" + date + "-" + year + " " + hour + ":" + minute + ":" + second;
+	    var pretty = formatDateObjectMMddyy(d) + " " + hour + ":" + minute + ":" + second;
+	    return pretty;
+	}
+	
+	function formatDateObjectyyyyMMdd(d) {
+	    var date = padLeftWithZero(d.getDate());
+	    var month = padLeftWithZero(d.getMonth() + 1); //Months are zero based
+	    var year = d.getFullYear();
+	    var pretty = year + "-" + month + "-" + date;
+	    return pretty;
+	}
+	
+	function formatDateObjectMMddyy(d) {
+	    var date = padLeftWithZero(d.getDate());
+	    var month = padLeftWithZero(d.getMonth() + 1); //Months are zero based
+	    var year = d.getFullYear();
+	    var pretty = month + "/" + date + "/" + year;
 	    return pretty;
 	}
 	

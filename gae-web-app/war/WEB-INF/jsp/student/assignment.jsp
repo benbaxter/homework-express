@@ -107,7 +107,6 @@
 			$.ajax({
 				url : "/actions/student/assignment/${assignment.id}/cancel-compile",
 				success : function(data) {
-					//$('#status-message').html("Compiled Canceled.");
 					$('#cancelProcessBtn').addClass("disabled")
 				}
 			});
@@ -115,7 +114,6 @@
 			$.ajax({
 				url : "/actions/student/assignment/${assignment.id}/cancel-program",
 				success : function(data) {
-					//$('#status-message').html("Program Canceled.");
 					$('#cancelProcessBtn').addClass("disabled")	
 				}
 			});
@@ -223,7 +221,7 @@
 					</c:when>
 					<c:otherwise>
 						<tr>
-							<td>You have not submitted any files yet.</td>
+							<td colspan="3">You have not submitted any files yet.</td>
 						</tr>
 					</c:otherwise>
 				</c:choose>

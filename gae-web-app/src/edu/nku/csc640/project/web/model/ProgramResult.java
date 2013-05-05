@@ -12,6 +12,7 @@ public class ProgramResult implements Serializable {
 	String error;
 	Date date;
 	String compare;
+	boolean hasRan;
 	
 	public String getCompare() {
 		return compare;
@@ -43,6 +44,11 @@ public class ProgramResult implements Serializable {
 	public void setDate(Date date) {
 		this.date = date;
 	}
-	
+	public boolean isHasRan() {
+		return hasRan;
+	}
+	public void setHasRan(boolean hasRan) {
+		this.hasRan = hasRan;
+	}
 	
 }

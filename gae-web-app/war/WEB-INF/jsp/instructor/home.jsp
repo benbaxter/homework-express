@@ -94,7 +94,7 @@
 			</thead>
 			<tbody id="courseList">
 				<tr>
-					<td>Could not load courses</td>
+					<td colspan="3">Could not load courses</td>
 				</tr>
 			</tbody>
 		</table>
@@ -114,9 +114,9 @@
 	    		<span id="addCourseReason"></span>
 	    	</div>
 			<label>Name</label> 
-				<input type="text" name="name" id="addCoursename" class="span3" placeholder="Type the course's name" />
+				<input type="text" name="name" id="addCoursename" class="span5" placeholder="Type the course's name" />
 			<label>Description</label> 
-				<textarea cols="50" rows="8" name="description" id="addCourseDescription" class="span3" placeholder="Tell us a little about the course"></textarea>
+				<textarea cols="50" rows="8" name="description" id="addCourseDescription" class="span5" placeholder="Tell us a little about the course"></textarea>
 			 <br />
 		</form>
     </p>

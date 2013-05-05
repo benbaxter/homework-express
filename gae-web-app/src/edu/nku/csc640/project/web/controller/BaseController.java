@@ -184,6 +184,9 @@ public abstract class BaseController {
 			result.setError((String) map.get("Error"));
 			result.setDate(convertDate((String) map.get("Date")));
 			result.setCompare((String) map.get("HtmlCompare"));
+			if( map.containsKey("HasRan") ) {
+				result.setHasRan((boolean) map.get("HasRan"));
+			}
 			return result;
 		} else {
 			return null;

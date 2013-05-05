@@ -126,8 +126,8 @@ function deleteAssignment(id) {
 		      	<c:if test="${not empty course.students}">
 		      		<c:set var="dispaly" value="" />
 				</c:if>
-		      	<div id="assignmentSection" style="display : ${display}">
-		      		<div class="text-right">
+		      	<div id="assignmentSection" style="display : ${display};">
+		      		<div class="text-right" style="margin-bottom: 10px;">
 						<a class="btn btn-primary" data-toggle="modal"
 							href="#addAssignmentModel"><i class="icon-plus"></i> Add Assignment</a>
 					</div>
