@@ -8,7 +8,8 @@
 			<p>A one stop resource for students and instructors to collaborate</p>
 		</div>
 		<div class="pull-right">
-			<img src="<c:url value="/img/unauthed-500-400.jpg" />" width="100%" />
+			You are not allowed to access this part of our application. 
+			<br />If you feel you have reached this page in error, please contact system support. 
 		</div>
 	</div>
 </div>

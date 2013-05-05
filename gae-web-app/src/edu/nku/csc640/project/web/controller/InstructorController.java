@@ -314,18 +314,6 @@ public class InstructorController extends BaseController {
 		return restTemplate.getForObject(endpoint,  Map.class);
 	}
 	
-	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/uploadTestFile", method=GET)
-	public String addTest(Model model, HttpSession session,
-			@PathVariable long assignmentid,
-			@PathVariable long courseid) {
-		model.addAttribute("courseid", courseid);
-		model.addAttribute("assignmentid", assignmentid);
-		model.addAttribute("navPage", "home");
-		model.addAttribute("user", getUser(session));
-		addMetaDataToModel(model, session);
-		return "instructor/test";
-	}
-	
 	@RequestMapping(value= root + "/assignment/{assignmentid}/student/{studentid}/update", method=GET)
 	public @ResponseBody Map<String, String> updateStudent(HttpSession session,
 			@PathVariable long assignmentid,
@@ -339,4 +327,42 @@ public class InstructorController extends BaseController {
 		return restTemplate.postForObject(endpoint, params, Map.class);
 	}
 
+	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/uploadTestFile", method=GET)
+	public String addTest(Model model, HttpSession session,
+			@PathVariable long assignmentid,
+			@PathVariable long courseid) {
+		model.addAttribute("courseid", courseid);
+		model.addAttribute("assignmentid", assignmentid);
+		model.addAttribute("user", getUser(session));
+		String submitUrl = BASE_URL + "instructor/addTestToAssignment";
+		model.addAttribute("submitUrl", submitUrl);
+		String callbackUrl = OUR_URL + "actions/instructor/course/" + courseid + "/assignment/" + assignmentid + "/submitted";
+		model.addAttribute("callbackUrl", callbackUrl);
+		model.addAttribute("navPage", "home");
+		addMetaDataToModel(model, session);
+		return "instructor/test";
+	}
+	
+	@RequestMapping(value= root + "/course/{courseid}/assignment/{assignmentid}/submitted", method=GET)
+	public String submitTestCase(Model model, HttpSession session, 
+			@PathVariable long courseid, @PathVariable long assignmentid, 
+			@RequestParam(value=RESPONSE_STATUS) String status,
+			@RequestParam(value=RESPONSE_REASON) String reason) {
+		if( RESPONSE_STATUS_SUCCESS.equalsIgnoreCase(status) ) {
+			return getAssignment(model, session, courseid, assignmentid);
+		} else {
+			model.addAttribute("error", reason);
+			return addTest(model, session, courseid, assignmentid);
+		}
+	}
+	
+	@RequestMapping(value= root + "/assignment/{assignmentid}/test/{testid}/delete", method=GET)
+	public @ResponseBody Map<String, String> deleteTestCase(@PathVariable long assignmentid,
+			@PathVariable long testid) {
+		String endpoint = BASE_URL + "instructor/removeTest";
+		Map<String, Object> params = new HashMap<>();
+		params.put("assignmentid", assignmentid);
+		params.put("testid", testid);
+		return restTemplate.postForObject(endpoint, params, Map.class);
+	}
 }

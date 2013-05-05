@@ -74,6 +74,11 @@
 		return formatDateObjectyyyyMMdd(d);
 	}
 
+	function formatDateFromServerMMddyy(serverTime) {
+		var d = new Date(parseInt(serverTime.substr(6)));
+		return formatDateObjectMMddyy(d);
+	}
+	
 	function formatDate(millis) {
 		var d = new Date(millis);
 	    return formatDateObject(d);

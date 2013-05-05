@@ -34,13 +34,23 @@
 	
 	function formatFileType(data) {
 		$.each(data.Tests, function(index, value) {
-			var fileType = "";
-			if( data.Tests[index].InputFile.FileType == "InstructorTestInput" ) {
-				fileType = "Standard Input";
-			} else if (data.Tests[index].InputFile.FileType == "InstructorTestInputFile" ) {
-				fileType = "Input File";
+			if( data.Tests[index].InputFile ) {
+				var fileType = "";
+				if( data.Tests[index].InputFile.FileType == "InstructorTestInput" ) {
+					fileType = "Standard Input";
+				} else if (data.Tests[index].InputFile.FileType == "InstructorTestInputFile" ) {
+					fileType = "Input File";
+				}
+				data.Tests[index].InputFile.FileType = fileType;
+			} else {
+				data.Tests[index].InputFile = new Object();
+				data.Tests[index].InputFile.FileType = "";
 			}
-			data.Tests[index].InputFile.FileType = fileType;
+			
+			if( ! data.Tests[index].OutputFile ) {
+				data.Tests[index].OutputFile = new Object();
+				data.Tests[index].OutputFile = "";
+			}
 		});
 	}
 	
@@ -257,6 +267,21 @@
 		}
 	}
 	
+	function deleteTest(id) {
+		$.ajax({
+			url : "/actions/instructor/assignment/${assignmentid}/test/" + id + "/delete",
+			dataType : "json",
+			type : "get",
+			success : function(data) {
+				if( data.Status == "Success" ) {
+					loadAssignment();
+				} else {
+					$("#loadAssignmentReason").html(data.Reason);
+					$("#loadAssignmentErrors").show();
+				}
+			}
+		});
+	}
 	
 	//-->
 	</script>
@@ -290,7 +315,6 @@
 	<script type="text/template" id="test-file-list-template">
 	<tr>
 		<td>
-			<a href="/actions/instructor/courses/${courseid}/assignment/${assignmentid}/test/\${Id}"><i class="icon-pencil"></i></a>
 			<a href="javascript: deleteTest(\${Id})"><i class="icon-trash"></i></a>
 		</td>
 		<td>\${Name}</td>
@@ -349,7 +373,7 @@
 			</tbody>
 		</table>
 		<div class="alert alert-error" id="loadAssignmentErrors"
-			style="display: none;"
+			style="display: none;">
 			<span id="loadAssignmentReason"></span>
 		</div>
 		<c:set var="goBackUrl" value="/actions/instructor/courses/${courseid}" />

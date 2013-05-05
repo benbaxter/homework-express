@@ -8,9 +8,7 @@
 			<p>A one stop resource for students and instructors to collaborate</p>
 		</div>
 		<div class="pull-right">
-			Something terrible happened but we don't care. Good Luck, Loser!
-			<br />
-			<img src="<c:url value="/img/soviet-500.jpg" />" width="100%" />
+			System error has occurred. Please contact system support.
 		</div>
 	</div>
 </div>
