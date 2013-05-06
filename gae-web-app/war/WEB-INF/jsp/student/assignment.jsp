@@ -103,10 +103,9 @@
 			url : "/actions/student/assignment/${assignment.id}/run-program-status",
 			success : function(data) {
 				var done = data[1].Status;
-				while( done == "InProgress") {
-					done = checkTestProgramStatus();
-				}
-				if( done && done != "InProgress" ){
+				if( done == "InProgress") {
+					setTimeout(checkTestProgramStatus(),3000);
+				} else {
 					$('#status-message').html(data[1].Message);
 					$('#cancelProcessBtn').addClass("disabled");
 					getTestProgramResult();
